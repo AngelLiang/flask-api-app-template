@@ -6,6 +6,7 @@ import click
 from flask import Flask
 
 from app.extensions import db
+from app.models import User
 from app.settings import config
 
 
