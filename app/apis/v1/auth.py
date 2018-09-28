@@ -57,8 +57,8 @@ def api_login_required(func):
 
 @api_v1_bp.route("/auth/login", methods=["POST"])
 def login():
-    username = request.values.get("username")
-    password = request.values.get("password")
+    username = request.values.get("username") or request.json.get("username")
+    password = request.values.get("password") or request.json.get("password")
     if username is None or password is None:
         raise ParameterMissException()
 

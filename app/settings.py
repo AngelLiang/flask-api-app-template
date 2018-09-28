@@ -14,6 +14,7 @@ else:
 
 
 class BaseConfig(object):
+    SECRET_KEY = os.getenv("SECRET_KEY") or "secret string"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
