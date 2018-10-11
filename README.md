@@ -2,10 +2,11 @@
 
 This is a simple flask app template with API.
 
-## quick start
+## Quick Start
 
 ```
 pipenv install
+pipenv shell
 flask run
 ```
 
