@@ -4,8 +4,9 @@ This is a simple flask app template with API.
 
 ## Quick Start
 
-```
-pipenv install
+```bash
+# develop
+pipenv install --dev
 pipenv shell
 flask run
 ```
