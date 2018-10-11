@@ -31,16 +31,21 @@ def generate_token(user, expiration=60*60*8):
 
 
 def validate_token(token):
-    s = Serializer(current_app.config["SECRET_KEY"])
-    try:
-        data = s.loads(token)
-    except BadSignature:
+    if token is None:
         raise TokenErrorException()
+
+    try:
+        s = Serializer(current_app.config["SECRET_KEY"])
+        data = s.loads(token)
     except SignatureExpired:
         raise TokenTimeOutException()
+    except BadSignature:
+        raise TokenErrorException()
+
     user = User.query.get(data["user_id"])
     if user is None:
         raise NotFoundException()
+
     g.current_user = user
     return user
 
