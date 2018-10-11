@@ -7,11 +7,15 @@ from flask import g, current_app, request
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, SignatureExpired
 
+# models
 from app.models import User
-
+# blueprint
 from app.apis.v1 import api_v1_bp
-from app.apis.v1.response_json import JsonResponse
-from app.apis.v1.errors import TokenErrorException, TokenTimeOutException, NotFoundException
+# utils
+from app.apis.v1.utils.response_json import JsonResponse
+# errors
+from app.apis.v1.errors import NotFoundException
+from app.apis.v1.errors import TokenErrorException, TokenTimeOutException
 
 
 def get_token():

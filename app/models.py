@@ -10,10 +10,11 @@ from app.extensions import db
 
 
 Model = db.Model
+relationship = db.relationship
+
 Column = db.Column
 Integer = db.Integer
 String = db.String
-relationship = db.relationship
 
 
 class User(Model):
