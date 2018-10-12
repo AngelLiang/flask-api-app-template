@@ -27,3 +27,29 @@ class User(Model):
 
     def validate_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def to_dict(self):
+        d = dict(
+            id=self.user_id,
+            username=self.username
+        )
+        return d
+
+    @staticmethod
+    def init_data():
+        admin = User()
+        admin.username = 'admin'
+        admin.set_password('admin')
+        db.session.add(admin)
+
+        admin01 = User()
+        admin01.username = 'admin01'
+        admin01.set_password('admin01')
+        db.session.add(admin01)
+
+        admin02 = User()
+        admin02.username = 'admin02'
+        admin02.set_password('admin02')
+        db.session.add(admin02)
+
+        db.session.commit()
