@@ -11,4 +11,8 @@ pipenv shell
 flask run
 ```
 
+## Test
 
+```bash
+python test_app.py
+```
