@@ -2,7 +2,7 @@
 
 from functools import wraps
 
-from flask import g, current_app, request
+from flask import g, current_app, request, jsonify
 
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, SignatureExpired
