@@ -14,7 +14,7 @@ def create_app(config_name=None):
     if config_name is None:
         config_name = os.getenv('FLASK_CONFIG', 'development')
 
-    app = Flask('app')
+    app = Flask(__name__)
 
     # 从settings获取配置信息，加载到app.config里
     app.config.from_object(config[config_name])
@@ -34,7 +34,7 @@ def register_extensions(app):
 
 def register_apis(app):
     from app.apis.v1 import api_v1_bp
-    app.register_blueprint(api_v1_bp, url_prefix="/api/v1")
+    app.register_blueprint(api_v1_bp, url_prefix='/api/v1')
 
 
 def register_shell_context(app):
