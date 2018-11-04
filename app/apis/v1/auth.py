@@ -15,6 +15,7 @@ from app.apis.v1 import api_v1_bp
 from app.apis.v1.utils.response_json import JsonResponse
 # errors
 from app.apis.v1.errors import NotFoundException
+from app.apis.v1.errors import ParameterMissException
 from app.apis.v1.errors import TokenErrorException, TokenTimeOutException
 
 

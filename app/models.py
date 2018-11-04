@@ -1,13 +1,12 @@
 # coding=utf-8
 
-import os
-import datetime as dt
+# import os
+# import datetime as dt
 
-from flask import current_app
+# from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.extensions import db
-
 
 Model = db.Model
 relationship = db.relationship
@@ -29,10 +28,7 @@ class User(Model):
         return check_password_hash(self.password_hash, password)
 
     def to_dict(self):
-        d = dict(
-            id=self.user_id,
-            username=self.username
-        )
+        d = dict(id=self.user_id, username=self.username)
         return d
 
     @staticmethod

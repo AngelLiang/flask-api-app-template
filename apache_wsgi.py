@@ -6,7 +6,6 @@
 import os
 import sys
 
-
 curr_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, curr_dir)
 
@@ -18,10 +17,10 @@ with open(activate_this) as file_:
     exec(file_.read(), dict(__file__=activate_this))
 
 # 加载.env环境变量
-from flask.cli import load_dotenv
+from flask.cli import load_dotenv  # noqa
 load_dotenv()
 
-from app import create_app
+from app import create_app  # noqa
 
 app = create_app("production")
 application = app

@@ -1,5 +1,6 @@
 # coding=utf-8
 
+
 def paginate_to_dict(paginate):
     return {
         "items": [item.to_dict() for item in paginate.items],

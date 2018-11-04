@@ -3,8 +3,8 @@
 RESTful API base class
 """
 
-import json
-from flask import Blueprint, jsonify, request, current_app
+# import json
+from flask import jsonify, request
 from flask.views import MethodView
 
 # db
@@ -12,7 +12,7 @@ from app.extensions import db
 from sqlalchemy import func
 
 # errors
-from app.apis.v1.errors import ParameterMissException, ParameterErrorException, NotFoundException
+from app.apis.v1.errors import NotFoundException
 # auth
 from app.apis.v1.auth import api_login_required
 # utils
@@ -58,12 +58,11 @@ class BaseModelAPI(MethodView):
     decorators = [api_login_required]
 
 
-class ModelCountAPI(BaseModelAPI):
+class ModelTotalAPI(BaseModelAPI):
 
     def get(self):
-        count = db.session.query(func.count('*')).select_from(
-            self.Model).scalar()
-        data = {"count": count}
+        total = db.session.query(func.count('*')).select_from(self.Model).scalar()
+        data = {"total": total}
         return jsonify(JsonResponse.success(data=data))
 
 
@@ -97,13 +96,12 @@ class ModelListAPI(BaseModelAPI):
         paginate = self.query_model()
         if paginate is None:
             paginate = self.Model.query.paginate(page, number)
-        items = paginate.items
+        # items = paginate.items
         data = paginate_to_dict(paginate)
 
         #  query count
-        total_items = db.session.query(func.count('*')).select_from(
-            self.Model).scalar()
-        data["total_items"] = total_items
+        total = db.session.query(func.count('*')).select_from(self.Model).scalar()
+        data["total"] = total
         # generate response
         return jsonify(JsonResponse.success(data=data))
 
