@@ -17,9 +17,18 @@ String = db.String
 
 
 class User(Model):
-    id = Column(Integer, primary_key=True)
+    '''User Model'''
+    user_id = Column(Integer, primary_key=True)
     username = Column(String(20), unique=True, index=True)
     password_hash = Column(String(128))
+
+    @property
+    def id(self):
+        return self.user_id
+
+    @id.setter
+    def id(self, val):
+        self.user_id = val
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
