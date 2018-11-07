@@ -1,9 +1,5 @@
 # coding=utf-8
 
-import os
-import datetime as dt
-
-from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.extensions import db
@@ -18,7 +14,7 @@ String = db.String
 
 
 class User(Model):
-    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, primary_key=True)
     username = Column(String(20), unique=True, index=True)
     password_hash = Column(String(128))
 
@@ -27,6 +23,14 @@ class User(Model):
 
     def validate_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    @property
+    def id(self):
+        return self.user_id
+
+    @id.setter
+    def id(self, val):
+        self.user_id = val
 
     def to_dict(self):
         d = dict(
