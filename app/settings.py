@@ -17,6 +17,12 @@ class BaseConfig(object):
     SECRET_KEY = os.getenv("SECRET_KEY") or "secret string"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # swagger
+    SWAGGER = {
+        'title': 'A Simple Flask API',
+        'uiversion': 2
+    }
+
 
 class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = \

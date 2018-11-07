@@ -16,6 +16,7 @@ from app.apis.v1.utils.response_json import JsonResponse
 # errors
 from app.apis.v1.errors import NotFoundException
 from app.apis.v1.errors import TokenErrorException, TokenTimeOutException
+from app.apis.v1.errors import ParameterMissException
 
 
 def get_token():
@@ -24,7 +25,7 @@ def get_token():
     return token
 
 
-def generate_token(user, expiration=60*60*8):
+def generate_token(user, expiration=60 * 60 * 8):
     s = Serializer(current_app.config["SECRET_KEY"], expires_in=expiration)
     token = s.dumps({"user_id": user.id}).decode()
     return token
@@ -66,8 +67,56 @@ def api_login_required(func):
 
 @api_v1_bp.route("/auth/login", methods=["POST"])
 def login():
-    username = request.values.get("username") or request.json.get("username")
-    password = request.values.get("password") or request.json.get("password")
+    '''
+    用户登录
+    ---
+    tags:
+      - auth
+    post:
+      parameters:
+        - in: formData
+          name: username
+          type: string
+          require: true
+          description: 用户名
+        - in: formData
+          name: password
+          type: string
+          require: true
+          description: 用户密码
+    response:
+      200:
+        description: 用户成功登录
+        schema:
+          required:
+            - code
+            - message
+            - request
+          properties:
+            code:
+              type: integer
+              default: 20000
+            message:
+              type: string
+              default: success
+            request:
+              type: string
+              default: <url>
+        examples:
+            application/json:
+              {
+                "code": 20000,
+                "request": "",
+                "messge": "",
+                data:{}
+              }
+    '''
+    if request.json:
+        username = request.json.get("username")
+        password = request.json.get("password")
+    else:
+        username = request.values.get("username")
+        password = request.values.get("password")
     if username is None or password is None:
         raise ParameterMissException()
 
@@ -81,4 +130,14 @@ def login():
 
 @api_v1_bp.route("/auth/logout", methods=["GET", "POST"])
 def logout():
+    '''
+    用户登出
+    ---
+    tags:
+      - auth
+    response:
+      200:
+        description: 用户成功登出
+    '''
+
     return jsonify(JsonResponse.success())

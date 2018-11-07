@@ -5,7 +5,7 @@ import os
 import click
 from flask import Flask
 
-from app.extensions import db
+from app.extensions import db, swagger
 from app.models import User
 from app.settings import config
 
@@ -30,6 +30,7 @@ def create_app(config_name=None):
 
 def register_extensions(app):
     db.init_app(app)
+    swagger.init_app(app)
 
 
 def register_apis(app):
