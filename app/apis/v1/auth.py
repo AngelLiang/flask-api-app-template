@@ -84,7 +84,7 @@ def login():
           type: string
           require: true
           description: 用户密码
-    response:
+    responses:
       200:
         description: 用户成功登录
         schema:
@@ -135,7 +135,7 @@ def logout():
     ---
     tags:
       - auth
-    response:
+    responses:
       200:
         description: 用户成功登出
     '''
