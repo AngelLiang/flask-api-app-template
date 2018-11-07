@@ -33,10 +33,6 @@ class User(Model):
     def id(self, value):
         self.user_id = value
 
-    def to_dict(self):
-        d = dict(id=self.id, name=self.name)
-        return d
-
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
