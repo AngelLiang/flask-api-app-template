@@ -17,6 +17,7 @@ from app.apis.v1.utils.response_json import JsonResponse
 from app.apis.v1.errors import NotFoundException
 from app.apis.v1.errors import ParameterMissException
 from app.apis.v1.errors import TokenErrorException, TokenTimeOutException
+from app.apis.v1.errors import ParameterMissException
 
 
 def get_token():
@@ -25,7 +26,7 @@ def get_token():
     return token
 
 
-def generate_token(user, expiration=60*60*8):
+def generate_token(user, expiration=60 * 60 * 8):
     s = Serializer(current_app.config["SECRET_KEY"], expires_in=expiration)
     token = s.dumps({"user_id": user.id}).decode()
     return token

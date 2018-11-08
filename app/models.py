@@ -1,9 +1,5 @@
 # coding=utf-8
 
-# import os
-# import datetime as dt
-
-# from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.extensions import db
