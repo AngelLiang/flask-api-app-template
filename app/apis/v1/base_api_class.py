@@ -3,8 +3,8 @@
 RESTful API base class
 """
 
-import json
-from flask import Blueprint, jsonify, request, current_app
+# import json
+from flask import jsonify, request
 from flask.views import MethodView
 
 # db
@@ -12,7 +12,8 @@ from app.extensions import db
 from sqlalchemy import func
 
 # errors
-from app.apis.v1.errors import ParameterMissException, ParameterErrorException, NotFoundException
+from app.apis.v1.errors import NotFoundException
+# from app.apis.v1.errors import ParameterMissException, ParameterErrorException
 # auth
 from app.apis.v1.auth import api_login_required
 # utils
@@ -97,7 +98,6 @@ class ModelListAPI(BaseModelAPI):
         paginate = self.query_model()
         if paginate is None:
             paginate = self.Model.query.paginate(page, number)
-        items = paginate.items
         data = paginate_to_dict(paginate)
 
         #  query count
