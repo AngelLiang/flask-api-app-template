@@ -5,6 +5,8 @@ import os
 import click
 from flask import Flask
 
+from flasgger import LazyJSONEncoder
+
 from app.extensions import db, swagger
 from app.models import User
 from app.settings import config
@@ -30,6 +32,7 @@ def create_app(config_name=None):
 
 def register_extensions(app):
     db.init_app(app)
+    app.json_encoder = LazyJSONEncoder
     swagger.init_app(app)
 
 
