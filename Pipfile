@@ -5,9 +5,9 @@ name = "pypi"
 
 [packages]
 flask = "*"
-flask-sqlalchemy = "*"
 flask-cors = "*"
 python-dotenv = "*"
+flask-pymongo = "*"
 
 [dev-packages]
 rope = "*"

@@ -1,14 +1,16 @@
 # coding=utf-8
 
 from functools import wraps
-
+from werkzeug.security import check_password_hash
 from flask import g, current_app, request, jsonify
+
 
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, SignatureExpired
 
+from app.extensions import mongo
 # models
-from app.models import User
+# from app.models import User
 # blueprint
 from app.apis.v1 import api_v1_bp
 # utils
@@ -20,18 +22,21 @@ from app.apis.v1.errors import ParameterMissException
 
 
 def get_token():
+    '''获取token'''
     # 首先从header获取token，如果没有则从参数中获取token
     token = request.headers.get("Authorization") or request.values.get("token")
     return token
 
 
 def generate_token(user, expiration=60 * 60 * 8):
+    '''生成token'''
     s = Serializer(current_app.config["SECRET_KEY"], expires_in=expiration)
-    token = s.dumps({"user_id": user.id}).decode()
+    token = s.dumps({"user_id": user['_id']}).decode()
     return token
 
 
 def validate_token(token):
+    '''验证token'''
     if token is None:
         raise TokenErrorException()
 
@@ -43,12 +48,17 @@ def validate_token(token):
     except BadSignature:
         raise TokenErrorException()
 
-    user = User.query.get(data["user_id"])
+    user = mongo.db.user.find_one(data["user_id"])
     if user is None:
         raise NotFoundException()
 
     g.current_user = user
     return user
+
+
+def validate_password(password_hash, password):
+    '''验证密码'''
+    return check_password_hash(password_hash, password)
 
 
 def api_login_required(func):
@@ -67,19 +77,33 @@ def api_login_required(func):
 
 @api_v1_bp.route("/auth/login", methods=["POST"])
 def login():
-    username = request.values.get("username") or request.json.get("username")
-    password = request.values.get("password") or request.json.get("password")
+    if request.json:
+        username = request.json.get("username")
+        password = request.json.get("password")
+    else:
+        username = request.values.get("username")
+        password = request.values.get("password")
+
+    # 验证参数
     if username is None or password is None:
         raise ParameterMissException()
 
-    user = User.query.filter_by(username=username).first()
-    if user and user.validate_password(password):
+    # 查找用户
+    query_json = {"username": username}
+    user = mongo.db.user.find_one(query_json)
+    current_app.logger.debug(user)
+
+    # 验证密码
+    if user and validate_password(user['password_hash'], password):
         token = generate_token(user)
         data = {"token": token}
         return jsonify(JsonResponse.success(data=data))
     return jsonify(JsonResponse.fail())
 
 
-@api_v1_bp.route("/auth/logout", methods=["GET", "POST"])
+@api_v1_bp.route("/auth/logout", methods=["POST"])
+@api_login_required
 def logout():
+    user = g.current_user
+    current_app.logger.debug(user)
     return jsonify(JsonResponse.success())
