@@ -1,6 +1,6 @@
 # codeing=utf-8
 
-from flask import jsonify, current_app, g
+from flask import jsonify
 
 from app.apis.v1 import api_v1_bp
 from app.apis.v1.utils import JsonResponse

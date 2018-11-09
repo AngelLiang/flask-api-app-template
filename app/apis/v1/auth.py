@@ -2,7 +2,7 @@
 
 from functools import wraps
 
-from flask import g, current_app, request
+from flask import g, current_app, request, jsonify
 
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, SignatureExpired
@@ -14,6 +14,7 @@ from app.apis.v1 import api_v1_bp
 # utils
 from app.apis.v1.utils.response_json import JsonResponse
 # errors
+from app.apis.v1.errors import ParameterMissException
 from app.apis.v1.errors import NotFoundException
 from app.apis.v1.errors import TokenErrorException, TokenTimeOutException
 
@@ -24,7 +25,7 @@ def get_token():
     return token
 
 
-def generate_token(user, expiration=60*60*8):
+def generate_token(user, expiration=60 * 60 * 8):
     s = Serializer(current_app.config["SECRET_KEY"], expires_in=expiration)
     token = s.dumps({"user_id": user.id}).decode()
     return token
@@ -66,8 +67,8 @@ def api_login_required(func):
 
 @api_v1_bp.route("/auth/login", methods=["POST"])
 def login():
-    username = request.values.get("username") or request.json.get("username")
-    password = request.values.get("password") or request.json.get("password")
+    username = request.values.get("username")
+    password = request.values.get("password")
     if username is None or password is None:
         raise ParameterMissException()
 
@@ -80,5 +81,6 @@ def login():
 
 
 @api_v1_bp.route("/auth/logout", methods=["GET", "POST"])
+@api_login_required
 def logout():
     return jsonify(JsonResponse.success())

@@ -1,9 +1,9 @@
 # coding=utf-8
 
-import os
-import datetime as dt
+# import os
+# import datetime as dt
 
-from flask import current_app
+# from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app.extensions import db
@@ -81,9 +81,8 @@ class Role(Model):
     role_id = Column(Integer, primary_key=True)
     name = Column(String(30), unique=True)
 
-    permissions = relationship(
-        'Permission', secondary='permission_and_role', back_populates='roles')
-
+    # relationship
+    permissions = relationship('Permission', secondary='permission_and_role', back_populates='roles')
     users = relationship('User', secondary='role_and_user')
 
     @property
@@ -132,10 +131,7 @@ class Permission(Model):
     name = Column(String(30), unique=True)
 
     # relationship
-    roles = relationship(
-        'Role', secondary='permission_and_role', back_populates='permissions')
-
-    # relationship
+    roles = relationship('Role', secondary='permission_and_role', back_populates='permissions')
     # users = relationship('User', secondary='permission_and_user', back_populates='permissions')
 
     @property
