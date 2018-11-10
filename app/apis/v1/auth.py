@@ -82,7 +82,7 @@ def login():
         raise ParameterMissException()
 
     res = es.search(
-        index="user-index", doc_type='user',
+        index=User.es_index, doc_type=User.doc_type,
         body={"query": {"match": {"username": username}}}
     )
     current_app.logger.debug(res)
