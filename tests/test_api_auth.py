@@ -2,7 +2,7 @@
 
 import unittest
 
-from flask import url_for, jsonify
+from flask import url_for
 from app.models import User
 
 from app import create_app, db

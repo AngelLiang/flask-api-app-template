@@ -8,6 +8,7 @@ This is a simple flask app template with API.
 # develop
 pipenv install --dev
 pipenv shell
+flask initdata
 flask run
 ```
 
