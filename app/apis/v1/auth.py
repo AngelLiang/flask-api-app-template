@@ -4,9 +4,13 @@ from functools import wraps
 
 from flask import g, current_app, request, jsonify
 
+from werkzeug.security import check_password_hash
+
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, SignatureExpired
 
+# extensions
+from app.extensions import es
 # models
 from app.models import User
 # blueprint
@@ -27,7 +31,7 @@ def get_token():
 
 def generate_token(user, expiration=60 * 60 * 8):
     s = Serializer(current_app.config["SECRET_KEY"], expires_in=expiration)
-    token = s.dumps({"user_id": user.id}).decode()
+    token = s.dumps({"user_id": user['_id']}).decode()
     return token
 
 
@@ -49,6 +53,10 @@ def validate_token(token):
 
     g.current_user = user
     return user
+
+
+def validate_password(password_hash, password):
+    return check_password_hash(password_hash, password)
 
 
 def api_login_required(func):
@@ -73,11 +81,21 @@ def login():
     if username is None or password is None:
         raise ParameterMissException()
 
-    user = User.query.filter_by(username=username).first()
-    if user and user.validate_password(password):
-        token = generate_token(user)
-        data = {"token": token}
-        return jsonify(JsonResponse.success(data=data))
+    res = es.search(
+        index="user-index", doc_type='user',
+        body={"query": {"match": {"username": username}}}
+    )
+    current_app.logger.debug(res)
+    hits = res['hits']['hits']
+    if len(hits) > 0:
+        user = hits[0]
+        password_hash = user['_source']['password_hash']
+        current_app.logger.debug(password_hash)
+
+        if user and validate_password(password_hash, password):
+            token = generate_token(user)
+            data = {"token": token}
+            return jsonify(JsonResponse.success(data=data))
     return jsonify(JsonResponse.fail())
 
 

@@ -5,7 +5,7 @@ import os
 import click
 from flask import Flask
 
-from app.extensions import db
+from app.extensions import es
 from app.models import User
 from app.settings import config
 
@@ -29,7 +29,7 @@ def create_app(config_name=None):
 
 
 def register_extensions(app):
-    db.init_app(app)
+    pass
 
 
 def register_apis(app):
@@ -40,7 +40,7 @@ def register_apis(app):
 def register_shell_context(app):
     @app.shell_context_processor
     def make_shell_context():
-        return dict(db=db, User=User)
+        return dict(es=es, User=User)
 
 
 def register_commands(app):
@@ -49,18 +49,16 @@ def register_commands(app):
     def initdb(drop):
         """Initialize the database."""
         if drop:
-            click.confirm(
-                'This operation will delete the database, do you want to continue?', abort=True)
-            db.drop_all()
+            click.confirm('This operation will delete the database, do you want to continue?', abort=True)
+            # db.drop_all()
             click.echo('Drop tables.')
-        db.create_all()
+        # db.create_all()
         click.echo('Initialized database.')
 
     @app.cli.command()
     def initdata():
         """Initialize data."""
         click.echo('Initializing the database...')
-        db.create_all()
 
         click.echo('Initializing User...')
         User.init_data()

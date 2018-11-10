@@ -1,4 +1,5 @@
 # coding=utf-8
+# flake8: noqa
 
 from flask import Blueprint
 from flask_cors import CORS

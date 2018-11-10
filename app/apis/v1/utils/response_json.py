@@ -42,13 +42,13 @@ class JsonResponse(object):
         return d
 
     @staticmethod
-    def parameter_miss(message="Parameter Miss", code=40001,  data={}) -> dict:
+    def parameter_miss(message="Parameter Miss", code=40001, data={}) -> dict:
         d = dict(code=code, message=message, data=data)
         _update_url(d)
         return d
 
     @staticmethod
-    def parameter_error(message="Parameter Error!", code=40012,  data={}) -> dict:
+    def parameter_error(message="Parameter Error!", code=40012, data={}) -> dict:
         d = dict(code=code, message=message, data=data)
         _update_url(d)
         return d
