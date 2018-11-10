@@ -47,7 +47,7 @@ def validate_token(token):
     except BadSignature:
         raise TokenErrorException()
 
-    user = User.query.get(data["user_id"])
+    user = User.get(data["user_id"])
     if user is None:
         raise NotFoundException()
 

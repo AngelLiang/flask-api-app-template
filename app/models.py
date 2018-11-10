@@ -8,6 +8,11 @@ from app.extensions import es
 class User(object):
 
     @classmethod
+    def get(cls, user_id):
+        res = es.get(index="user-index", doc_type='user', id=user_id)
+        return res
+
+    @classmethod
     def create(cls, username, password, user_id=None):
         user = {
             'username': username,
@@ -23,6 +28,11 @@ class User(object):
             'password_hash': generate_password_hash(password),
         }
         res = es.update(index="user-index", doc_type='user', id=user_id, body=user)
+        return res
+
+    @classmethod
+    def delete(cls, user_id):
+        res = es.delete(index="user-index", doc_type='user', id=user_id)
         return res
 
     @staticmethod

@@ -52,7 +52,7 @@ class UserAPI(MethodView):
         return jsonify(JsonResponse.success(data=data))
 
 
-api_v1_bp.add_url_rule('/user', view_func=UserAPI.as_view('user-api'))
+api_v1_bp.add_url_rule('/user', view_func=UserAPI.as_view('user_api'))
 
 
 class UserIdAPI(MethodView):
@@ -79,7 +79,8 @@ class UserIdAPI(MethodView):
         '''
         DELETE /api/v1/user/<user_id>
         '''
-        pass
+        User.delete(user_id)
+        return jsonify(JsonResponse.success())
 
 
-api_v1_bp.add_url_rule('/user/<any:user_id>', view_func=UserIdAPI.as_view('user_id-api'))
+api_v1_bp.add_url_rule('/user/<int:user_id>', view_func=UserIdAPI.as_view('user_id_api'))
