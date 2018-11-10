@@ -7,6 +7,24 @@ from app.extensions import es
 
 class User(object):
 
+    @classmethod
+    def create(cls, username, password, user_id=None):
+        user = {
+            'username': username,
+            'password_hash': generate_password_hash(password),
+        }
+        res = es.index(index="user-index", doc_type='user', id=user_id, body=user)
+        return res
+
+    @classmethod
+    def update(cls, user_id, username, password):
+        user = {
+            'username': username,
+            'password_hash': generate_password_hash(password),
+        }
+        res = es.update(index="user-index", doc_type='user', id=user_id, body=user)
+        return res
+
     @staticmethod
     def init_data():
         admin = {

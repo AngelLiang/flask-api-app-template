@@ -34,6 +34,15 @@ class TokenErrorException(APIBaseException):
     pass
 
 
+__all__ = (
+    APIBaseException,
+    FailException,
+    NotFoundException,
+    ParameterMissException, ParameterErrorException,
+    TokenTimeOutException, TokenErrorException
+)
+
+
 @api_v1_bp.errorhandler(APIBaseException)
 def api_base_error_handle(e):
     json_callback = JsonResponse.fail
