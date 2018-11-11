@@ -11,7 +11,7 @@ from app.models import User
 from app.apis.v1 import api_v1_bp
 # utils
 from app.apis.v1.utils.response_json import JsonResponse
-from app.apis.v1.errors import ParameterMissException
+from app.apis.v1.errors import ParameterMissException, ParameterErrorException
 
 
 class UserAPI(MethodView):
@@ -19,12 +19,16 @@ class UserAPI(MethodView):
         '''
         GET /api/v1/user
         '''
-        # page = request.args.get('page', default=1, type=int)
-        # number = request.args.get('number', default=10, type=int)
+        page = request.args.get('page', default=1, type=int)
+        number = request.args.get('number', default=10, type=int)
 
+        if page <= 0 or number <= 0:
+            raise ParameterErrorException()
+        from_ = page - 1
         res = es.search(
             index="user-index", doc_type='user',
-            body={'query': {'match_all': {}}}
+            body={'query': {'match_all': {}}},
+            params={'from': from_, 'size': number}
         )
         current_app.logger.debug(res)
 
