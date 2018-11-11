@@ -1,4 +1,5 @@
 # coding=utf-8
+# flake8: noqa
 """
 使用Apache24部署时用到
 """
