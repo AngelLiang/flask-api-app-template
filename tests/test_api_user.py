@@ -29,7 +29,7 @@ class APIUserTestCase(unittest.TestCase):
         data = response.get_json()
         return data['data']['token']
 
-    def test_1_user_list(self):
+    def test_1_user_get(self):
         response = self.client.get(url_for('api_v1.user_api'))
         data = response.get_json()
         # print(data)
@@ -42,7 +42,7 @@ class APIUserTestCase(unittest.TestCase):
             password='admin03'
         ))
         data = response.get_json()
-        # print(data)
+        print(data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['code'], 20000)
 
@@ -58,10 +58,10 @@ class APIUserTestCase(unittest.TestCase):
             url_for('api_v1.user_id_api', user_id=1),
             data=dict(
                 # username='admin03',
-                password='123456'
+                password='admin'
             ))
         data = response.get_json()
-        # print(data)
+        print(data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['code'], 20000)
 

@@ -46,6 +46,6 @@ class APIAuthTestCase(unittest.TestCase):
             token=token
         ))
         data = response.get_json()
-        print(data)
+        # print(data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['code'], 20000)
