@@ -60,31 +60,31 @@ api_v1_bp.add_url_rule('/user', view_func=UserAPI.as_view('user_api'))
 
 
 class UserIdAPI(MethodView):
-    def get(self, user_id):
+    def get(self, id_):
         '''
-        GET /api/v1/user/<user_id>
+        GET /api/v1/user/<id_>
         '''
-        res = es.get(index=User.es_index, doc_type=User.doc_type, id=user_id)
+        res = es.get(index=User.es_index, doc_type=User.doc_type, id=id_)
         current_app.logger.debug(res)
         data = res
         return jsonify(JsonResponse.success(data=data))
 
-    def post(self, user_id):
+    def post(self, id_):
         '''
-        POST /api/v1/user/<user_id>
+        POST /api/v1/user/<id_>
         '''
         username = request.values.get('username')
         password = request.values.get('password')
 
-        data = User.update(user_id, username, password)
+        data = User.update(id_, username, password)
         return jsonify(JsonResponse.success(data=data))
 
-    def delete(self, user_id):
+    def delete(self, id_):
         '''
-        DELETE /api/v1/user/<user_id>
+        DELETE /api/v1/user/<id_>
         '''
-        User.delete(user_id)
+        User.delete(id_)
         return jsonify(JsonResponse.success())
 
 
-api_v1_bp.add_url_rule('/user/<int:user_id>', view_func=UserIdAPI.as_view('user_id_api'))
+api_v1_bp.add_url_rule('/user/<id_>', view_func=UserIdAPI.as_view('user_id_api'))
