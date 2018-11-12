@@ -26,7 +26,7 @@ class UserAPI(MethodView):
             raise ParameterErrorException()
         from_ = page - 1
         res = es.search(
-            index="user-index", doc_type='user',
+            index=User.es_index, doc_type=User.doc_type,
             body={'query': {'match_all': {}}},
             params={'from': from_, 'size': number}
         )
@@ -64,7 +64,7 @@ class UserIdAPI(MethodView):
         '''
         GET /api/v1/user/<user_id>
         '''
-        res = es.get(index="user-index", doc_type='user', id=user_id)
+        res = es.get(index=User.es_index, doc_type=User.doc_type, id=user_id)
         current_app.logger.debug(res)
         data = res
         return jsonify(JsonResponse.success(data=data))
