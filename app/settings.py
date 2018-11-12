@@ -3,7 +3,7 @@
 import os
 import sys
 
-basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+BASEDIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 # SQLite URI compatible
 WIN = sys.platform.startswith("win")
@@ -19,7 +19,7 @@ class BaseConfig(object):
 
 
 class DevelopmentConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI = prefix + os.path.join(basedir, "data-dev.db")
+    SQLALCHEMY_DATABASE_URI = prefix + os.path.join(BASEDIR, "data-dev.db")
     # REDIS_URL = "redis://localhost"
     # SQLALCHEMY_ECHO = True
 
@@ -33,7 +33,7 @@ class TestingConfig(BaseConfig):
 class ProductionConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
-        prefix + os.path.join(basedir, "data.db")
+        prefix + os.path.join(BASEDIR, "data.db")
     )
 
 
