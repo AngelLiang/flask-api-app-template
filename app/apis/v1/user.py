@@ -27,7 +27,10 @@ class UserAPI(MethodView):
         from_ = page - 1
         res = es.search(
             index=User.es_index, doc_type=User.doc_type,
-            body={'query': {'match_all': {}}},
+            body={
+                'query': {'match_all': {}},
+                "sort": {"create_datetime": "asc"}  # 默认使用 create_datetime 正序排序。desc：倒序
+            },
             params={'from': from_, 'size': number}
         )
         current_app.logger.debug(res)
