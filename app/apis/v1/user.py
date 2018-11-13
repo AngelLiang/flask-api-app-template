@@ -31,7 +31,7 @@ class UserAPI(MethodView):
                 'query': {'match_all': {}},
                 "sort": {"create_datetime": "asc"}  # 默认使用 create_datetime 正序排序。desc：倒序
             },
-            params={'from': from_, 'size': number}
+            params={'from': from_, 'size': number}  # 分页
         )
         current_app.logger.debug(res)
 
