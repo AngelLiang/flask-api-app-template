@@ -69,9 +69,15 @@ class UserIdAPI(MethodView):
         '''
         GET /api/v1/user/<id_>
         '''
-        res = es.get(index=User.es_index, doc_type=User.doc_type, id=id_)
+        res = es.get(
+            index=User.es_index, doc_type=User.doc_type, id=id_,
+            ignore=[400, 404]
+        )
         current_app.logger.debug(res)
-        data = res
+        data = {}
+        _source = res.get('_source')
+        if _source:
+            data.update(_source)
         return jsonify(JsonResponse.success(data=data))
 
     def post(self, id_):
