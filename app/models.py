@@ -69,7 +69,7 @@ class User(ModelMixin):
             'username': username,
             'password_hash': generate_password_hash(password),
         }
-        res = es.index(index=cls.es_index, doc_type=cls.doc_type, id=id, body=user)
+        res = es.index(index=cls.es_index, doc_type=cls.doc_type, id=id, body=user, refresh=True)
         return res
 
     @staticmethod
