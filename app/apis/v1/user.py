@@ -31,18 +31,20 @@ class UserAPI(MethodView):
                 'query': {'match_all': {}},
                 "sort": {"create_datetime": "asc"}  # 默认使用 create_datetime 正序排序。desc：倒序
             },
-            params={'from': from_, 'size': number}  # 分页
+            params={'from': from_, 'size': number},  # 分页
+            ignore=[400, 404]
         )
         current_app.logger.debug(res)
 
-        hits = res['hits']
-        total = hits['total']
-        items = hits['hits']
-
         data = {}
-        data['total'] = total
-        data['items'] = items
-        data['items_size'] = len(items)
+        hits = res.get('hits')
+        if hits:
+            total = hits['total']
+            items = hits['hits']
+
+            data['total'] = total
+            data['items'] = items
+            data['items_size'] = len(items)
         return jsonify(JsonResponse.success(data=data))
 
     def post(self):
