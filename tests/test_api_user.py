@@ -42,7 +42,9 @@ class APIUserTestCase(unittest.TestCase):
         return data['data']['token']
 
     def test_1_user_list(self):
-        response = self.client.get(url_for('api_v1.user_api'))
+        response = self.client.get(url_for('api_v1.user_api'), data=dict(
+            token=self.get_token()
+        ))
         data = response.get_json()
         # print(data)
         self.assertEqual(response.status_code, 200)
@@ -50,6 +52,7 @@ class APIUserTestCase(unittest.TestCase):
 
     def test_2_user_post(self):
         response = self.client.post(url_for('api_v1.user_api'), data=dict(
+            token=self.get_token(),
             username='admin03',
             password='admin03'
         ))
@@ -59,7 +62,9 @@ class APIUserTestCase(unittest.TestCase):
         self.assertEqual(data['code'], 20000)
 
     def test_3_user_id_get(self):
-        response = self.client.get(url_for('api_v1.user_id_api', user_id=1))
+        response = self.client.get(url_for('api_v1.user_id_api', user_id=1), data=dict(
+            token=self.get_token()
+        ))
         data = response.get_json()
         # print(data)
         self.assertEqual(response.status_code, 200)
@@ -69,6 +74,7 @@ class APIUserTestCase(unittest.TestCase):
         response = self.client.post(
             url_for('api_v1.user_id_api', user_id=1),
             data=dict(
+                token=self.get_token(),
                 # username='admin03',
                 password='123456'
             ))
@@ -78,7 +84,9 @@ class APIUserTestCase(unittest.TestCase):
         self.assertEqual(data['code'], 20000)
 
     def test_5_user_id_delete(self):
-        response = self.client.delete(url_for('api_v1.user_id_api', user_id=1))
+        response = self.client.delete(url_for('api_v1.user_id_api', user_id=1), data=dict(
+            token=self.get_token()
+        ))
         data = response.get_json()
         # print(data)
         self.assertEqual(response.status_code, 200)

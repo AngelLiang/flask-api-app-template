@@ -13,24 +13,23 @@ from app.models import User
 # blueprint
 from app.apis.v1 import api_v1_bp
 # utils
-from app.apis.v1.utils.response_json import JsonResponse
+from app.apis.v1.utils import JsonResponse, paginate2dict
 from app.apis.v1.errors import ParameterMissException, NotFoundException
+# auth
+from app.apis.v1.auth import api_login_required
 
 
-def paginate2dict(paginate):
-    return dict(
-        items=[item.to_dict() for item in paginate.items],
-        items_size=len(paginate.items),
-        current_page=paginate.page,  # 当前页数
-        total_pages=paginate.pages,  # 总页数
-        has_prev=paginate.has_prev,  # 是否有前一页
-        has_next=paginate.has_next,  # 是否有下一页
-        prev_number=paginate.prev_num,   # 前一页数
-        next_number=paginate.next_num,   # 后一页数
-    )
+@api_v1_bp.route("/user/total", methods=["GET"])
+@api_login_required
+def user_total():
+    total = db.session.query(func.count('*')).select_from(User).scalar()
+    data = {'total': total}
+    return jsonify(JsonResponse.success(data=data))
 
 
 class UserAPI(MethodView):
+    decorators = [api_login_required]
+
     def get(self):
         '''
         GET /api/v1/user
@@ -71,6 +70,8 @@ api_v1_bp.add_url_rule('/user', view_func=UserAPI.as_view('user_api'))
 
 
 class UserIdAPI(MethodView):
+    decorators = [api_login_required]
+
     def get(self, user_id):
         '''
         GET /api/v1/user/<user_id>
@@ -112,4 +113,4 @@ class UserIdAPI(MethodView):
         return jsonify(JsonResponse.success())
 
 
-api_v1_bp.add_url_rule('/user/<int:user_id>', view_func=UserIdAPI.as_view('user_id_api'))
+api_v1_bp.add_url_rule('/user/<user_id>', view_func=UserIdAPI.as_view('user_id_api'))
