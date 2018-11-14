@@ -8,7 +8,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, SignatureExpired
 
 # models
-from app.models import User
+from app.models import Account as User
 # blueprint
 from app.apis.v1 import api_v1_bp
 # utils
@@ -80,7 +80,7 @@ def login():
     return jsonify(JsonResponse.fail())
 
 
-@api_v1_bp.route("/auth/logout", methods=["GET", "POST"])
+@api_v1_bp.route("/auth/logout", methods=["POST"])
 @api_login_required
 def logout():
     return jsonify(JsonResponse.success())

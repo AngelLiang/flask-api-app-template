@@ -6,7 +6,7 @@ import click
 from flask import Flask
 
 from app.extensions import db
-from app.models import User
+from app.models import Account as User, Role
 from app.settings import config
 
 
@@ -60,6 +60,9 @@ def register_commands(app):
         """Initialize data."""
         click.echo('Initializing the database...')
         db.create_all()
+
+        click.echo('Initializing Role...')
+        Role.init_data()
 
         click.echo('Initializing User...')
         User.init_data()

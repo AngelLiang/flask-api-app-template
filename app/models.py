@@ -1,7 +1,8 @@
 # coding=utf-8
 
 # import os
-# import datetime as dt
+from enum import Enum, unique
+import datetime as dt
 
 # from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -20,18 +21,21 @@ Boolean = db.Boolean
 DateTime = db.DateTime
 
 
-class User(Model):
-    user_id = Column(Integer, primary_key=True)
+class Account(Model):
+    '''帐户'''
+    __tablename__ = 'account'
+    account_id = Column(Integer, primary_key=True)
     username = Column(String(20), unique=True, index=True)
-    password_hash = Column(String(128))
+    password_hash = Column(String(128), nullable=False)
+    create_datetime = Column(DateTime, nullable=False, default=dt.datetime.now)
 
     @property
     def id(self):
-        return self.user_id
+        return self.account_id
 
     @id.setter
     def id(self, value):
-        self.user_id = value
+        self.account_id = value
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -41,27 +45,20 @@ class User(Model):
 
     def to_dict(self):
         d = dict(
-            id=self.user_id,
-            username=self.username
+            id=self.account_id,
+            username=self.username,
+            create_datetime=dt.datetime.strftime(self.create_datetime, '%Y-%m-%d %H:%M:%S')
         )
         return d
 
     @staticmethod
     def init_data():
-        admin = User()
+        admin = Account.query.get(1)
+        if not admin:
+            admin = Account()
         admin.username = 'admin'
         admin.set_password('admin')
         db.session.add(admin)
-
-        admin01 = User()
-        admin01.username = 'admin01'
-        admin01.set_password('admin01')
-        db.session.add(admin01)
-
-        admin02 = User()
-        admin02.username = 'admin02'
-        admin02.set_password('admin02')
-        db.session.add(admin02)
 
         db.session.commit()
 
@@ -69,21 +66,29 @@ class User(Model):
 # Role
 
 
-RoleAndUser = db.Table(
-    'role_and_user',
-    Column('role_id', Integer, db.ForeignKey('role.role_id')),
-    Column('user_id', Integer, db.ForeignKey('user.user_id'))
-)
+@unique
+class RoleEnum(Enum):
+    Administrator = 1
+    User = 2
+
+
+class RolesAccounts(Model):
+    '''角色和帐户关联表'''
+    __tablename__ = 'roles_accounts'
+    id = Column(Integer, primary_key=True)
+    role_id = Column(Integer, ForeignKey('role.role_id'))
+    account_id = Column(Integer, ForeignKey('account.account_id'))
 
 
 class Role(Model):
+    '''角色'''
     __tablename__ = 'role'
     role_id = Column(Integer, primary_key=True)
     name = Column(String(30), unique=True)
 
     # relationship
-    permissions = relationship('Permission', secondary='permission_and_role', back_populates='roles')
-    users = relationship('User', secondary='role_and_user')
+    permissions = relationship('Permission', secondary='permissions_roles', back_populates='roles')
+    accounts = relationship('Account', secondary='roles_accounts')
 
     @property
     def id(self):
@@ -99,10 +104,10 @@ class Role(Model):
 
     @staticmethod
     def init_data():
-        role_list = ['Administrator', 'User']
-        for item in role_list:
+        for role_enum in RoleEnum:
             role = Role()
-            role.name = item
+            role.role_id = role_enum.value
+            role.name = role_enum.name
             db.session.add(role)
         db.session.commit()
 
@@ -110,29 +115,36 @@ class Role(Model):
 # Permission
 
 
-# relationship table
-PermissionAndUser = db.Table(
-    'permission_and_user',
-    Column('permission_id', Integer, db.ForeignKey('permission.permission_id')),
-    Column('user_id', Integer, db.ForeignKey('user.user_id')),
-)
+@unique
+class PermissionEnum(Enum):
+    Administration = 1
 
-PermissionAndRole = db.Table(
-    'permission_and_role',
-    Column('permission_id', Integer, db.ForeignKey('permission.permission_id')),
-    Column('role_id', Integer, db.ForeignKey('role.role_id'))
 
-)
+class PermissionsAccounts(Model):
+    '''权限和帐户关联表'''
+    __tablename__ = 'permissions_accounts'
+    id = Column(Integer, primary_key=True)
+    permission_id = Column(Integer, ForeignKey('permission.permission_id'))
+    account_id = Column(Integer, ForeignKey('account.account_id'))
+
+
+class PermissionsRoles(Model):
+    '''权限和角色关联表'''
+    __tablename__ = 'permissions_roles'
+    id = Column(Integer, primary_key=True)
+    permission_id = Column(Integer, ForeignKey('permission.permission_id'))
+    role_id = Column(Integer, ForeignKey('role.role_id'))
 
 
 class Permission(Model):
+    '''权限'''
     __tablename__ = 'permission'
     permission_id = Column(Integer, primary_key=True)
     name = Column(String(30), unique=True)
 
     # relationship
-    roles = relationship('Role', secondary='permission_and_role', back_populates='permissions')
-    # users = relationship('User', secondary='permission_and_user', back_populates='permissions')
+    roles = relationship('Role', secondary='permissions_roles', back_populates='permissions')
+    accounts = relationship('Account', secondary='permissions_accounts')
 
     @property
     def id(self):
@@ -148,4 +160,9 @@ class Permission(Model):
 
     @staticmethod
     def init_data():
-        pass
+        for permission_enum in PermissionEnum:
+            p = Permission()
+            p.id = permission_enum.value
+            p.name = permission_enum.name
+            db.session.add(p)
+        db.session.commit()
