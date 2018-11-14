@@ -41,8 +41,7 @@ class UserAPI(MethodView):
 
         total = db.session.query(func.count('*')).select_from(User).scalar()
 
-        data = {}
-        data['items'] = paginate2dict(paginate)
+        data = paginate2dict(paginate)
         data['total'] = total
         return jsonify(JsonResponse.success(data=data))
 
