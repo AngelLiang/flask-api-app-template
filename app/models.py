@@ -87,8 +87,7 @@ class Role(Model):
     name = Column(String(30), unique=True)
 
     # relationship
-    permissions = relationship('Permission', secondary='permissions_roles', back_populates='roles')
-    accounts = relationship('Account', secondary='roles_accounts')
+    accounts = relationship('Account', secondary='roles_accounts', backref='roles')
 
     @property
     def id(self):
@@ -143,8 +142,8 @@ class Permission(Model):
     name = Column(String(30), unique=True)
 
     # relationship
-    roles = relationship('Role', secondary='permissions_roles', back_populates='permissions')
-    accounts = relationship('Account', secondary='permissions_accounts')
+    roles = relationship('Role', secondary='permissions_roles', backref='permissions')
+    accounts = relationship('Account', secondary='permissions_accounts', backref='permissions')
 
     @property
     def id(self):
