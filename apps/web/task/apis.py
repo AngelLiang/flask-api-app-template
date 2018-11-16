@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from flask import jsonify, Blueprint
-# utils
+
 from apps.web.utils import JsonResponse
 
 task_bp = Blueprint('task_bp', __name__)

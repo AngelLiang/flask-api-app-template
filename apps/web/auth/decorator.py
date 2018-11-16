@@ -5,8 +5,7 @@ from functools import wraps
 from flask import jsonify, request
 
 from apps.web.utils import JsonResponse
-
-from .apis import get_token, validate_token
+from apps.web.auth.apis import get_token, validate_token
 
 
 def api_login_required(func):

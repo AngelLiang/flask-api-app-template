@@ -1,21 +1,16 @@
 # coding=utf-8
 
+from sqlalchemy import func
+
 from flask import current_app, g
 from flask import request, jsonify, Blueprint
 from flask.views import MethodView
 
-from sqlalchemy import func
-
-# extensions
+from apps.web import exceptions
 from apps.web.extensions import db, CORS
-# models
-from .models import User
-
-# utils
 from apps.web.utils import JsonResponse, paginate2dict
-from apps.web.errors import ParameterMissException, NotFoundException
-# auth
 from apps.web.auth.decorator import api_login_required
+from apps.web.user.models import User
 
 user_bp = Blueprint("user_bp", __name__)
 CORS(user_bp)
@@ -66,7 +61,7 @@ class UserAPI(MethodView):
         password = request.values.get('password')
 
         if username is None or password is None:
-            raise ParameterMissException()
+            raise exceptions.ParameterMissException()
 
         user = User()
         user.username = username
@@ -90,7 +85,7 @@ class UserIdAPI(MethodView):
         '''
         user = User.query.get(user_id)
         if not user:
-            raise NotFoundException()
+            raise exceptions.NotFoundException()
         data = user.to_dict()
         return jsonify(JsonResponse.success(data=data))
 
@@ -103,7 +98,7 @@ class UserIdAPI(MethodView):
 
         user = User.query.get(user_id)
         if not user:
-            raise NotFoundException()
+            raise exceptions.NotFoundException()
         if username:
             user.username = username
         if password:
@@ -119,7 +114,7 @@ class UserIdAPI(MethodView):
         '''
         user = User.query.get(user_id)
         if not user:
-            raise NotFoundException()
+            raise exceptions.NotFoundException()
         db.session.delete(user)
         db.session.commit()
         return jsonify(JsonResponse.success())
