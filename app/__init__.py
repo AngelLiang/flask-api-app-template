@@ -12,7 +12,7 @@ from app.settings import config
 
 def create_app(config_name=None):
     if config_name is None:
-        config_name = os.getenv('FLASK_CONFIG', 'development')
+        config_name = os.getenv('FLASK_ENV', 'development')
 
     app = Flask('app')
 
@@ -33,8 +33,7 @@ def register_extensions(app):
 
 
 def register_apis(app):
-    from app.apis.v1 import api_v1_bp
-    app.register_blueprint(api_v1_bp, url_prefix="/api/v1")
+    pass
 
 
 def register_shell_context(app):

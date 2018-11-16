@@ -104,7 +104,9 @@ class Role(Model):
     @staticmethod
     def init_data():
         for role_enum in RoleEnum:
-            role = Role()
+            role = Role.query.get(role_enum.value)
+            if not role:
+                role = Role()
             role.role_id = role_enum.value
             role.name = role_enum.name
             db.session.add(role)
@@ -160,7 +162,9 @@ class Permission(Model):
     @staticmethod
     def init_data():
         for permission_enum in PermissionEnum:
-            p = Permission()
+            p = Permission.query.get(permission_enum.value)
+            if not p:
+                p = Permission()
             p.id = permission_enum.value
             p.name = permission_enum.name
             db.session.add(p)
