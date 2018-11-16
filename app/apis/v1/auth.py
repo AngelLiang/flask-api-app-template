@@ -7,16 +7,10 @@ from flask import g, current_app, request, jsonify
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, SignatureExpired
 
-# models
+from app import exceptions
+from app.utils import JsonResponse
 from app.models import User
-# blueprint
 from app.apis.v1 import api_v1_bp
-# utils
-from app.apis.v1.utils.response_json import JsonResponse
-# errors
-from app.apis.v1.errors import NotFoundException
-from app.apis.v1.errors import TokenErrorException, TokenTimeOutException
-from app.apis.v1.errors import ParameterMissException
 
 
 def get_token():
@@ -33,19 +27,19 @@ def generate_token(user, expiration=60 * 60 * 8):
 
 def validate_token(token):
     if token is None:
-        raise TokenErrorException()
+        raise exceptions.TokenErrorException()
 
     try:
         s = Serializer(current_app.config["SECRET_KEY"])
         data = s.loads(token)
     except SignatureExpired:
-        raise TokenTimeOutException()
+        raise exceptions.TokenTimeOutException()
     except BadSignature:
-        raise TokenErrorException()
+        raise exceptions.TokenErrorException()
 
     user = User.query.get(data["user_id"])
     if user is None:
-        raise NotFoundException()
+        raise exceptions.NotFoundException()
 
     g.current_user = user
     return user
@@ -71,7 +65,7 @@ def login():
     password = request.values.get("password")
 
     if username is None or password is None:
-        raise ParameterMissException()
+        raise exceptions.ParameterMissException()
 
     user = User.query.filter_by(username=username).first()
     if user and user.validate_password(password):

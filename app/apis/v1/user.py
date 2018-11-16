@@ -6,16 +6,11 @@ from flask.views import MethodView
 
 from sqlalchemy import func
 
-# extensions
 from app.extensions import db
-# models
+from app.exceptions import ParameterMissException, NotFoundException
+from app.utils import JsonResponse, paginate2dict
 from app.models import User
-# blueprint
 from app.apis.v1 import api_v1_bp
-# utils
-from app.apis.v1.utils import JsonResponse, paginate2dict
-from app.apis.v1.errors import ParameterMissException, NotFoundException
-# auth
 from app.apis.v1.auth import api_login_required
 
 

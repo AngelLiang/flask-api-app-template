@@ -8,11 +8,12 @@ from flask import Flask
 from app.extensions import db
 from app.models import User
 from app.settings import config
+from app.errors import register_errors
 
 
 def create_app(config_name=None):
     if config_name is None:
-        config_name = os.getenv('FLASK_CONFIG', 'development')
+        config_name = os.getenv('FLASK_ENV', 'development')
 
     app = Flask(__name__)
 
@@ -24,6 +25,7 @@ def create_app(config_name=None):
     register_apis(app)
     register_shell_context(app)
     register_commands(app)
+    register_errors(app)
 
     return app
 
