@@ -22,7 +22,7 @@ with open(activate_this) as file_:
 from flask.cli import load_dotenv
 load_dotenv()
 
-from app import create_app
+from apps.web import create_app
 
 app = create_app("production")
 application = app

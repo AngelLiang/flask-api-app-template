@@ -2,8 +2,8 @@
 
 from flask import jsonify
 
-from app.apis.v1 import api_v1_bp
-from app.apis.v1.utils import JsonResponse
+from apps.web.apis.v1 import api_v1_bp
+from apps.web.apis.v1.utils import JsonResponse
 
 
 class APIBaseException(ValueError):

@@ -3,7 +3,10 @@
 import os
 import sys
 
-BASEDIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+# BASEDIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+BASEDIR = os.path.abspath(
+    os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+)
 
 # SQLite URI compatible
 WIN = sys.platform.startswith("win")
