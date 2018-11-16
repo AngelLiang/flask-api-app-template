@@ -7,6 +7,10 @@ from app.extensions import mongo
 
 class User(object):
 
+    user_id = None
+    username = ''
+    password_hash = ''
+
     @staticmethod
     def init_data():
         password_hash = generate_password_hash("admin")

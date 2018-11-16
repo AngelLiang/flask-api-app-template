@@ -6,13 +6,13 @@ import click
 from flask import Flask
 
 from app.extensions import mongo
-from app.models import User
 from app.settings import config
+from app.models import User
 
 
 def create_app(config_name=None):
     if config_name is None:
-        config_name = os.getenv('FLASK_CONFIG', 'development')
+        config_name = os.getenv('FLASK_ENV', 'development')
 
     app = Flask(__name__)
 
@@ -33,8 +33,7 @@ def register_extensions(app):
 
 
 def register_apis(app):
-    from app.apis.v1 import api_v1_bp
-    app.register_blueprint(api_v1_bp, url_prefix='/api/v1')
+    pass
 
 
 def register_shell_context(app):
@@ -49,8 +48,7 @@ def register_commands(app):
     def initdb(drop):
         """Initialize the database."""
         if drop:
-            click.confirm(
-                'This operation will delete the database, do you want to continue?', abort=True)
+            click.confirm('This operation will delete the database, do you want to continue?', abort=True)
 
             click.echo('Drop tables.')
 
