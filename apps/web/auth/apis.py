@@ -4,7 +4,7 @@ from flask import Blueprint
 from flask import jsonify, request, current_app, g
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired
 
-# from app.extensions import db
+from apps.web.extensions import CORS
 # models
 from apps.web.user.models import User
 
@@ -15,6 +15,7 @@ from apps.web.errors import TokenTimeOutException, TokenErrorException
 
 
 auth_bp = Blueprint("auth_bp", __name__)
+CORS(auth_bp)
 
 
 def get_token():
