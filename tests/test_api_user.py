@@ -3,7 +3,7 @@
 import unittest
 
 from flask import url_for
-from app.models import User
+from app.user.models import User
 
 from app import create_app
 
@@ -22,7 +22,7 @@ class APIUserTestCase(unittest.TestCase):
         self.app_context.pop()
 
     def get_token(self):
-        response = self.client.post(url_for('api_v1.login'), data=dict(
+        response = self.client.post(url_for('user_bp.login'), data=dict(
             username='admin',
             password='admin'
         ))
@@ -30,14 +30,14 @@ class APIUserTestCase(unittest.TestCase):
         return data['data']['token']
 
     def test_1_user_get(self):
-        response = self.client.get(url_for('api_v1.user_api'))
+        response = self.client.get(url_for('user_bp.user_api'))
         data = response.get_json()
         # print(data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['code'], 20000)
 
     def test_2_user_post(self):
-        response = self.client.post(url_for('api_v1.user_api'), data=dict(
+        response = self.client.post(url_for('user_bp.user_api'), data=dict(
             username='admin03',
             password='admin03'
         ))
@@ -47,7 +47,7 @@ class APIUserTestCase(unittest.TestCase):
         self.assertEqual(data['code'], 20000)
 
     def test_3_user_id_get(self):
-        response = self.client.get(url_for('api_v1.user_id_api', id_=1))
+        response = self.client.get(url_for('user_bp.user_id_api', id_=1))
         data = response.get_json()
         # print(data)
         self.assertEqual(response.status_code, 200)
@@ -55,7 +55,7 @@ class APIUserTestCase(unittest.TestCase):
 
     def test_4_user_id_post(self):
         response = self.client.post(
-            url_for('api_v1.user_id_api', id_=1),
+            url_for('user_bp.user_id_api', id_=1),
             data=dict(
                 # username='admin03',
                 password='admin'
@@ -66,7 +66,7 @@ class APIUserTestCase(unittest.TestCase):
         self.assertEqual(data['code'], 20000)
 
     def test_5_user_id_delete(self):
-        response = self.client.delete(url_for('api_v1.user_id_api', id_=1))
+        response = self.client.delete(url_for('user_bp.user_id_api', id_=1))
         data = response.get_json()
         # print(data)
         self.assertEqual(response.status_code, 200)

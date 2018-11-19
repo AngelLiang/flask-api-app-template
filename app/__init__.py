@@ -6,13 +6,15 @@ import click
 from flask import Flask
 
 from app.extensions import es
-from app.models import User
+from app.user.models import User
 from app.settings import config
+
+from .errors import register_errors
 
 
 def create_app(config_name=None):
     if config_name is None:
-        config_name = os.getenv('FLASK_CONFIG', 'development')
+        config_name = os.getenv('FLASK_ENV', 'development')
 
     app = Flask(__name__)
 
@@ -24,6 +26,7 @@ def create_app(config_name=None):
     register_apis(app)
     register_shell_context(app)
     register_commands(app)
+    register_errors(app)
 
     return app
 
@@ -33,8 +36,11 @@ def register_extensions(app):
 
 
 def register_apis(app):
-    from app.apis.v1 import api_v1_bp
-    app.register_blueprint(api_v1_bp, url_prefix='/api/v1')
+    from app.auth.apis import auth_bp
+    from app.user.apis import user_bp
+    url_prefix = '/api/v1'
+    app.register_blueprint(auth_bp, url_prefix=url_prefix)
+    app.register_blueprint(user_bp, url_prefix=url_prefix)
 
 
 def register_shell_context(app):

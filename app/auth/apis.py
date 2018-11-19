@@ -2,7 +2,9 @@
 
 from functools import wraps
 
+from flask import Blueprint
 from flask import g, current_app, request, jsonify
+from flask_cors import CORS
 
 from werkzeug.security import check_password_hash
 
@@ -11,14 +13,13 @@ from itsdangerous import BadSignature, SignatureExpired
 
 # extensions
 from app.extensions import es
-# models
-from app.models import User
-# blueprint
-from app.apis.v1 import api_v1_bp
-# utils
-from app.apis.v1.utils.response_json import JsonResponse
-# errors
+from app.utils import JsonResponse
 from app.exceptions import WebException
+from app.user.models import User
+
+auth_bp = Blueprint("auth_bp", __name__)
+
+CORS(auth_bp)
 
 
 def get_token():
@@ -71,7 +72,7 @@ def api_login_required(func):
     return decorated_function
 
 
-@api_v1_bp.route("/auth/login", methods=["POST"])
+@auth_bp.route("/auth/login", methods=["POST"])
 def login():
     username = request.values.get("username")
     password = request.values.get("password")
@@ -84,20 +85,23 @@ def login():
         body={"query": {"match": {"username": username}}}
     )
     current_app.logger.debug(res)
-    hits = res['hits']['hits']
-    if len(hits) > 0:
-        user = hits[0]
-        password_hash = user['_source']['password_hash']
-        current_app.logger.debug(password_hash)
+    hits = res.get('hits')
 
-        if user and validate_password(password_hash, password):
-            token = generate_token(user)
-            data = {"token": token}
-            return jsonify(JsonResponse.success(data=data))
+    if hits:
+        hits = hits['hits']
+        if len(hits) > 0:
+            user = hits[0]
+            password_hash = user['_source'].get('password_hash')
+            # current_app.logger.debug(password_hash)
+
+            if user and validate_password(password_hash, password):
+                token = generate_token(user)
+                data = {"token": token}
+                return jsonify(JsonResponse.success(data=data))
     return jsonify(JsonResponse.fail())
 
 
-@api_v1_bp.route("/auth/logout", methods=["POST"])
+@auth_bp.route("/auth/logout", methods=["POST"])
 @api_login_required
 def logout():
     return jsonify(JsonResponse.success())

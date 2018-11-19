@@ -1,17 +1,20 @@
 # coding=utf-8
 
+from flask import Blueprint
 from flask import current_app, request, jsonify
 from flask.views import MethodView
 
+from flask_cors import CORS
+
 # extensions
 from app.extensions import es
-# models
-from app.models import User
-# blueprint
-from app.apis.v1 import api_v1_bp
-# utils
-from app.apis.v1.utils.response_json import JsonResponse
+from app.utils import JsonResponse
 from app.exceptions import WebException
+from app.user.models import User
+
+user_bp = Blueprint("user_bp", __name__)
+
+CORS(user_bp)
 
 
 class UserAPI(MethodView):
@@ -62,7 +65,7 @@ class UserAPI(MethodView):
         return jsonify(JsonResponse.success(data=data))
 
 
-api_v1_bp.add_url_rule('/user', view_func=UserAPI.as_view('user_api'))
+user_bp.add_url_rule('/user', view_func=UserAPI.as_view('user_api'))
 
 
 class UserIdAPI(MethodView):
@@ -99,4 +102,4 @@ class UserIdAPI(MethodView):
         return jsonify(JsonResponse.success())
 
 
-api_v1_bp.add_url_rule('/user/<id_>', view_func=UserIdAPI.as_view('user_id_api'))
+user_bp.add_url_rule('/user/<id_>', view_func=UserIdAPI.as_view('user_id_api'))

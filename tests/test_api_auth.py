@@ -3,7 +3,7 @@
 import unittest
 
 from flask import url_for
-from app.models import User
+from app.user.models import User
 
 from app import create_app
 
@@ -22,7 +22,7 @@ class APIAuthTestCase(unittest.TestCase):
         self.app_context.pop()
 
     def get_token(self):
-        response = self.client.post(url_for('api_v1.login'), data=dict(
+        response = self.client.post(url_for('auth_bp.login'), data=dict(
             username='admin',
             password='admin'
         ))
@@ -30,7 +30,7 @@ class APIAuthTestCase(unittest.TestCase):
         return data['data']['token']
 
     def test_1_login(self):
-        response = self.client.post(url_for('api_v1.login'), data=dict(
+        response = self.client.post(url_for('auth_bp.login'), data=dict(
             username='admin',
             password='admin'
         ))
@@ -42,7 +42,7 @@ class APIAuthTestCase(unittest.TestCase):
 
     def test_2_logout(self):
         token = self.get_token()
-        response = self.client.post(url_for('api_v1.logout'), data=dict(
+        response = self.client.post(url_for('auth_bp.logout'), data=dict(
             token=token
         ))
         data = response.get_json()
