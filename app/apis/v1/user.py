@@ -24,7 +24,7 @@ class UserAPI(MethodView):
 
         if page <= 0 or number <= 0:
             raise WebException.ParameterErrorException()
-        from_ = page - 1
+        from_ = (page - 1) * number
         res = es.search(
             index=User.es_index, doc_type=User.doc_type,
             body={
