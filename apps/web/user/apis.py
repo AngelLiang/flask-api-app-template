@@ -6,8 +6,8 @@ from flask import current_app, g
 from flask import request, jsonify, Blueprint
 from flask.views import MethodView
 
-from apps.web import exceptions
 from apps.web.extensions import db, CORS
+from apps.web.exceptions import WebException
 from apps.web.utils import JsonResponse, paginate2dict
 from apps.web.auth.decorator import api_login_required
 from apps.web.user.models import User
@@ -61,7 +61,7 @@ class UserAPI(MethodView):
         password = request.values.get('password')
 
         if username is None or password is None:
-            raise exceptions.ParameterMissException()
+            raise WebException.ParameterMissException()
 
         user = User()
         user.username = username
@@ -85,7 +85,7 @@ class UserIdAPI(MethodView):
         '''
         user = User.query.get(user_id)
         if not user:
-            raise exceptions.NotFoundException()
+            raise WebException.NotFoundException()
         data = user.to_dict()
         return jsonify(JsonResponse.success(data=data))
 
@@ -98,7 +98,7 @@ class UserIdAPI(MethodView):
 
         user = User.query.get(user_id)
         if not user:
-            raise exceptions.NotFoundException()
+            raise WebException.NotFoundException()
         if username:
             user.username = username
         if password:
@@ -114,7 +114,7 @@ class UserIdAPI(MethodView):
         '''
         user = User.query.get(user_id)
         if not user:
-            raise exceptions.NotFoundException()
+            raise WebException.NotFoundException()
         db.session.delete(user)
         db.session.commit()
         return jsonify(JsonResponse.success())
