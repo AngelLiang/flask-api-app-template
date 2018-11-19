@@ -11,7 +11,7 @@ from app.models import User
 from app.apis.v1 import api_v1_bp
 # utils
 from app.apis.v1.utils.response_json import JsonResponse
-from app.apis.v1.errors import ParameterMissException, ParameterErrorException
+from app.exceptions import WebException
 
 
 class UserAPI(MethodView):
@@ -23,7 +23,7 @@ class UserAPI(MethodView):
         number = request.args.get('number', default=10, type=int)
 
         if page <= 0 or number <= 0:
-            raise ParameterErrorException()
+            raise WebException.ParameterErrorException()
         from_ = page - 1
         res = es.search(
             index=User.es_index, doc_type=User.doc_type,
@@ -56,7 +56,7 @@ class UserAPI(MethodView):
         password = request.values.get('password')
 
         if username is None or password is None:
-            raise ParameterMissException()
+            raise WebException.ParameterMissException()
 
         data = User.create(username, password)
         return jsonify(JsonResponse.success(data=data))

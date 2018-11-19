@@ -4,46 +4,10 @@ from flask import jsonify
 
 from app.apis.v1 import api_v1_bp
 from app.apis.v1.utils import JsonResponse
+from app.exceptions import WebException
 
 
-class APIBaseException(ValueError):
-    pass
-
-
-class FailException(APIBaseException):
-    pass
-
-
-class NotFoundException(APIBaseException):
-    pass
-
-
-class ParameterMissException(APIBaseException):
-    pass
-
-
-class ParameterErrorException(APIBaseException):
-    pass
-
-
-class TokenTimeOutException(APIBaseException):
-    pass
-
-
-class TokenErrorException(APIBaseException):
-    pass
-
-
-__all__ = (
-    APIBaseException,
-    FailException,
-    NotFoundException,
-    ParameterMissException, ParameterErrorException,
-    TokenTimeOutException, TokenErrorException
-)
-
-
-@api_v1_bp.errorhandler(APIBaseException)
+@api_v1_bp.errorhandler(WebException.APIBaseException)
 def api_base_error_handle(e):
     json_callback = JsonResponse.fail
     if e.args:
@@ -53,7 +17,7 @@ def api_base_error_handle(e):
     return jsonify(json_response)
 
 
-@api_v1_bp.errorhandler(FailException)
+@api_v1_bp.errorhandler(WebException.FailException)
 def fail_handle(e):
     json_callback = JsonResponse.fail
     if e.args:
@@ -63,7 +27,7 @@ def fail_handle(e):
     return jsonify(json_response)
 
 
-@api_v1_bp.errorhandler(NotFoundException)
+@api_v1_bp.errorhandler(WebException.NotFoundException)
 def not_found_handle(e):
     json_callback = JsonResponse.not_found
     if e.args:
@@ -73,7 +37,7 @@ def not_found_handle(e):
     return jsonify(json_response)
 
 
-@api_v1_bp.errorhandler(ParameterMissException)
+@api_v1_bp.errorhandler(WebException.ParameterMissException)
 def parameter_miss_handle(e):
     json_callback = JsonResponse.parameter_miss
     if e.args:
@@ -83,7 +47,7 @@ def parameter_miss_handle(e):
     return jsonify(json_response)
 
 
-@api_v1_bp.errorhandler(ParameterErrorException)
+@api_v1_bp.errorhandler(WebException.ParameterErrorException)
 def parameter_error_handle(e):
     json_callback = JsonResponse.parameter_error
     if e.args:
@@ -93,7 +57,7 @@ def parameter_error_handle(e):
     return jsonify(json_response)
 
 
-@api_v1_bp.errorhandler(TokenTimeOutException)
+@api_v1_bp.errorhandler(WebException.TokenTimeOutException)
 def token_time_out_handle(e):
     json_callback = JsonResponse.token_timeout
     if e.args:
@@ -103,7 +67,7 @@ def token_time_out_handle(e):
     return jsonify(json_response)
 
 
-@api_v1_bp.errorhandler(TokenErrorException)
+@api_v1_bp.errorhandler(WebException.TokenErrorException)
 def token_error_handle(e):
     json_callback = JsonResponse.token_error
     if e.args:

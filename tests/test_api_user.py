@@ -42,12 +42,12 @@ class APIUserTestCase(unittest.TestCase):
             password='admin03'
         ))
         data = response.get_json()
-        print(data)
+        # print(data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['code'], 20000)
 
     def test_3_user_id_get(self):
-        response = self.client.get(url_for('api_v1.user_id_api', user_id=1))
+        response = self.client.get(url_for('api_v1.user_id_api', id_=1))
         data = response.get_json()
         # print(data)
         self.assertEqual(response.status_code, 200)
@@ -55,18 +55,18 @@ class APIUserTestCase(unittest.TestCase):
 
     def test_4_user_id_post(self):
         response = self.client.post(
-            url_for('api_v1.user_id_api', user_id=1),
+            url_for('api_v1.user_id_api', id_=1),
             data=dict(
                 # username='admin03',
                 password='admin'
             ))
         data = response.get_json()
-        print(data)
+        # print(data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['code'], 20000)
 
     def test_5_user_id_delete(self):
-        response = self.client.delete(url_for('api_v1.user_id_api', user_id=1))
+        response = self.client.delete(url_for('api_v1.user_id_api', id_=1))
         data = response.get_json()
         # print(data)
         self.assertEqual(response.status_code, 200)

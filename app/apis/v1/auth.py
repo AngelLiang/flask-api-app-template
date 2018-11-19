@@ -18,9 +18,7 @@ from app.apis.v1 import api_v1_bp
 # utils
 from app.apis.v1.utils.response_json import JsonResponse
 # errors
-from app.apis.v1.errors import NotFoundException
-from app.apis.v1.errors import TokenErrorException, TokenTimeOutException
-from app.apis.v1.errors import ParameterMissException
+from app.exceptions import WebException
 
 
 def get_token():
@@ -37,19 +35,19 @@ def generate_token(user, expiration=60 * 60 * 8):
 
 def validate_token(token):
     if token is None:
-        raise TokenErrorException()
+        raise WebException.TokenErrorException()
 
     try:
         s = Serializer(current_app.config["SECRET_KEY"])
         data = s.loads(token)
     except SignatureExpired:
-        raise TokenTimeOutException()
+        raise WebException.TokenTimeOutException()
     except BadSignature:
-        raise TokenErrorException()
+        raise WebException.TokenErrorException()
 
     user = User.get(data["user_id"])
     if user is None:
-        raise NotFoundException()
+        raise WebException.NotFoundException()
 
     g.current_user = user
     return user
@@ -79,7 +77,7 @@ def login():
     password = request.values.get("password")
 
     if username is None or password is None:
-        raise ParameterMissException()
+        raise WebException.ParameterMissException()
 
     res = es.search(
         index=User.es_index, doc_type=User.doc_type,
