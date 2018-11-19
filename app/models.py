@@ -1,5 +1,6 @@
 # coding=utf-8
 
+import datetime as dt
 from werkzeug.security import generate_password_hash
 from flask import current_app
 
@@ -77,6 +78,7 @@ class User(ModelMixin):
         admin = {
             'username': 'admin',
             'password_hash': generate_password_hash('admin'),
+            'create_datetime': dt.datetime.now()
         }
         res = es.index(index=User.es_index, doc_type=User.doc_type, id=1, body=admin)
         print(res)

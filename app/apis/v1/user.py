@@ -32,7 +32,8 @@ class UserAPI(MethodView):
                 "sort": {"create_datetime": "asc"}  # 默认使用 create_datetime 正序排序。desc：倒序
             },
             params={'from': from_, 'size': number},  # 分页
-            ignore=[400, 404]
+            filter_path=['hits.total', 'hits.hits'],    # 过滤返回的字段
+            ignore=[400, 404],
         )
         current_app.logger.debug(res)
 
