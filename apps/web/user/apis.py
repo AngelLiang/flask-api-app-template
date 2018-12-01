@@ -79,24 +79,24 @@ user_bp.add_url_rule('/user', view_func=UserAPI.as_view('user_api'))
 class UserIdAPI(MethodView):
     decorators = [api_login_required]
 
-    def get(self, user_id):
+    def get(self, id_):
         '''
-        GET /api/v1/user/<user_id>
+        GET /api/v1/user/<id_>
         '''
-        user = User.query.get(user_id)
+        user = User.query.get(id_)
         if not user:
             raise WebException.NotFoundException()
         data = user.to_dict()
         return jsonify(JsonResponse.success(data=data))
 
-    def post(self, user_id):
+    def post(self, id_):
         '''
-        POST /api/v1/user/<user_id>
+        POST /api/v1/user/<id_>
         '''
         username = request.values.get('username')
         password = request.values.get('password')
 
-        user = User.query.get(user_id)
+        user = User.query.get(id_)
         if not user:
             raise WebException.NotFoundException()
         if username:
@@ -108,11 +108,11 @@ class UserIdAPI(MethodView):
         data = user.to_dict()
         return jsonify(JsonResponse.success(data=data))
 
-    def delete(self, user_id):
+    def delete(self, id_):
         '''
-        DELETE /api/v1/user/<user_id>
+        DELETE /api/v1/user/<id_>
         '''
-        user = User.query.get(user_id)
+        user = User.query.get(id_)
         if not user:
             raise WebException.NotFoundException()
         db.session.delete(user)
@@ -121,4 +121,4 @@ class UserIdAPI(MethodView):
 
 
 user_bp.add_url_rule(
-    '/user/<user_id>', view_func=UserIdAPI.as_view('user_id_api'))
+    '/user/<id_>', view_func=UserIdAPI.as_view('user_id_api'))

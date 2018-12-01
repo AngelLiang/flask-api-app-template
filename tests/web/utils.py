@@ -22,6 +22,7 @@ class TestUtil(object):
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
+        return user
 
     def login(self, username=None, password=None):
         if username is None and password is None:
