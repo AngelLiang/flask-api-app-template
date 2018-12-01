@@ -21,7 +21,7 @@ with open(activate_this) as file_:
 from flask.cli import load_dotenv  # noqa
 load_dotenv()
 
-from app import create_app  # noqa
+from apps.web import create_app
 
 app = create_app("production")
 application = app

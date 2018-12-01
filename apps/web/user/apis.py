@@ -1,36 +1,42 @@
 # coding=utf-8
 
-# from flask import current_app
-from flask import request, jsonify
-from flask.views import MethodView
-
 from sqlalchemy import func
 
-# extensions
-from app.extensions import db
-# models
-from app.models import User
-# blueprint
-from app.apis.v1 import api_v1_bp
-# utils
-from app.apis.v1.utils.response_json import JsonResponse
-from app.apis.v1.errors import ParameterMissException, NotFoundException
+from flask import current_app, g
+from flask import request, jsonify, Blueprint
+from flask.views import MethodView
+
+from apps.web.extensions import db, CORS
+from apps.web.exceptions import WebException
+from apps.web.utils import JsonResponse, paginate2dict
+from apps.web.auth.decorator import api_login_required
+from apps.web.user.models import User
+
+user_bp = Blueprint("user_bp", __name__)
+CORS(user_bp)
 
 
-def paginate2dict(paginate):
-    return dict(
-        items=[item.to_dict() for item in paginate.items],
-        items_size=len(paginate.items),
-        current_page=paginate.page,  # 当前页数
-        total_pages=paginate.pages,  # 总页数
-        has_prev=paginate.has_prev,  # 是否有前一页
-        has_next=paginate.has_next,  # 是否有下一页
-        prev_number=paginate.prev_num,   # 前一页数
-        next_number=paginate.next_num,   # 后一页数
-    )
+@user_bp.route("/user/info", methods=["GET"])
+@api_login_required
+def user_info():
+    user = g.current_user
+    roles = [role.name for role in user.roles]
+    current_app.logger.debug(roles)
+    return jsonify(JsonResponse.success(data={"name": user.username, 'roles': ['admin']}))
+
+
+@user_bp.route("/user/total", methods=["GET"])
+@api_login_required
+def user_total():
+    total = db.session.query(func.count('*')).select_from(User).scalar()
+    data = {'total': total}
+    return jsonify(JsonResponse.success(data=data))
 
 
 class UserAPI(MethodView):
+
+    decorators = [api_login_required]
+
     def get(self):
         '''
         GET /api/v1/user
@@ -42,9 +48,9 @@ class UserAPI(MethodView):
 
         total = db.session.query(func.count('*')).select_from(User).scalar()
 
-        data = {}
-        data['items'] = paginate2dict(paginate)
+        data = paginate2dict(paginate)
         data['total'] = total
+        current_app.logger.debug(data)
         return jsonify(JsonResponse.success(data=data))
 
     def post(self):
@@ -55,7 +61,7 @@ class UserAPI(MethodView):
         password = request.values.get('password')
 
         if username is None or password is None:
-            raise ParameterMissException()
+            raise WebException.ParameterMissException()
 
         user = User()
         user.username = username
@@ -67,17 +73,19 @@ class UserAPI(MethodView):
         return jsonify(JsonResponse.success(data=data))
 
 
-api_v1_bp.add_url_rule('/user', view_func=UserAPI.as_view('user_api'))
+user_bp.add_url_rule('/user', view_func=UserAPI.as_view('user_api'))
 
 
 class UserIdAPI(MethodView):
+    decorators = [api_login_required]
+
     def get(self, user_id):
         '''
         GET /api/v1/user/<user_id>
         '''
         user = User.query.get(user_id)
         if not user:
-            raise NotFoundException()
+            raise WebException.NotFoundException()
         data = user.to_dict()
         return jsonify(JsonResponse.success(data=data))
 
@@ -90,7 +98,7 @@ class UserIdAPI(MethodView):
 
         user = User.query.get(user_id)
         if not user:
-            raise NotFoundException()
+            raise WebException.NotFoundException()
         if username:
             user.username = username
         if password:
@@ -106,10 +114,11 @@ class UserIdAPI(MethodView):
         '''
         user = User.query.get(user_id)
         if not user:
-            raise NotFoundException()
+            raise WebException.NotFoundException()
         db.session.delete(user)
         db.session.commit()
         return jsonify(JsonResponse.success())
 
 
-api_v1_bp.add_url_rule('/user/<int:user_id>', view_func=UserIdAPI.as_view('user_id_api'))
+user_bp.add_url_rule(
+    '/user/<user_id>', view_func=UserIdAPI.as_view('user_id_api'))

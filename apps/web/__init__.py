@@ -5,14 +5,19 @@ import os
 import click
 from flask import Flask
 
-from app.extensions import db
-from app.models import User
-from app.settings import config
+from apps.web.extensions import db
+from apps.web.settings import config
+
+from apps.web.errors import register_errors
+
+from apps.web.permission.models import Permission
+from apps.web.role.models import Role
+from apps.web.user.models import User
 
 
 def create_app(config_name=None):
     if config_name is None:
-        config_name = os.getenv('FLASK_CONFIG', 'development')
+        config_name = os.getenv('FLASK_ENV', 'development')
 
     app = Flask(__name__)
 
@@ -24,6 +29,7 @@ def create_app(config_name=None):
     register_apis(app)
     register_shell_context(app)
     register_commands(app)
+    register_errors(app)
 
     return app
 
@@ -33,14 +39,16 @@ def register_extensions(app):
 
 
 def register_apis(app):
-    from app.apis.v1 import api_v1_bp
-    app.register_blueprint(api_v1_bp, url_prefix='/api/v1')
+    from apps.web.auth.apis import auth_bp
+    from apps.web.user.apis import user_bp
+    app.register_blueprint(auth_bp, url_prefix='/api/v1')
+    app.register_blueprint(user_bp, url_prefix='/api/v1')
 
 
 def register_shell_context(app):
     @app.shell_context_processor
     def make_shell_context():
-        return dict(db=db, User=User)
+        return dict(db=db)
 
 
 def register_commands(app):
@@ -49,7 +57,8 @@ def register_commands(app):
     def initdb(drop):
         """Initialize the database."""
         if drop:
-            click.confirm('This operation will delete the database, do you want to continue?', abort=True)
+            click.confirm(
+                'This operation will delete the database, do you want to continue?', abort=True)
             db.drop_all()
             click.echo('Drop tables.')
         db.create_all()
@@ -57,9 +66,13 @@ def register_commands(app):
 
     @app.cli.command()
     def initdata():
-        """Initialize data."""
-        click.echo('Initializing the database...')
+        """Initialize the data."""
         db.create_all()
+
+        click.echo('Initializing Permission...')
+        Permission.init_data()
+        click.echo('Initializing Role...')
+        Role.init_data()
 
         click.echo('Initializing User...')
         User.init_data()
