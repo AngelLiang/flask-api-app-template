@@ -24,23 +24,17 @@ class TestUtil(object):
         db.session.commit()
         return user
 
-    def login(self, username=None, password=None):
-        if username is None and password is None:
-            username = 'admin'
-            password = 'admin'
-
+    def login(self, username='admin', password='admin'):
         return self.client.post(url_for('auth_bp.login'), data=dict(
             username=username,
             password=password
         ))
 
-    def get_token(self, username=None, password=None):
-        if username is None and password is None:
-            username = 'admin'
-            password = 'admin'
-
+    def get_token(self, username='admin', password='admin'):
         response = self.client.post(url_for('auth_bp.login'), data=dict(
             username=username,
             password=password
         ))
-        return response.get_json()['data']['token']
+        json_data = response.get_json()
+        # print(json_data)
+        return json_data['data']['token']
