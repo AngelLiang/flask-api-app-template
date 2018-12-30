@@ -5,8 +5,8 @@ import os
 import click
 from flask import Flask
 
-from app.extensions import db
-from app.models import Account as User, Role
+from app.extensions import db, rbac
+from app.models import User, Role
 from app.settings import config
 
 
@@ -30,6 +30,7 @@ def create_app(config_name=None):
 
 def register_extensions(app):
     db.init_app(app)
+    rbac.init_app(app)
 
 
 def register_apis(app):

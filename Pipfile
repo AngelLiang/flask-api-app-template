@@ -8,6 +8,7 @@ flask = "*"
 flask-sqlalchemy = "*"
 flask-cors = "*"
 python-dotenv = "*"
+flask-rbac = "==0.2.1"
 
 [dev-packages]
 rope = "*"

@@ -1,13 +1,11 @@
 # coding=utf-8
 
-# import os
-from enum import Enum, unique
 import datetime as dt
+from flask_rbac import RoleMixin, UserMixin
 
-# from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from app.extensions import db
+from app.extensions import db, rbac
 
 
 Model = db.Model
@@ -21,21 +19,22 @@ Boolean = db.Boolean
 DateTime = db.DateTime
 
 
-class Account(Model):
-    '''帐户'''
-    __tablename__ = 'account'
-    account_id = Column(Integer, primary_key=True)
+@rbac.as_user_model
+class User(Model, UserMixin):
+    """帐户"""
+    __tablename__ = 'user'
+    user_id = Column(Integer, primary_key=True)
     username = Column(String(20), unique=True, index=True)
     password_hash = Column(String(128), nullable=False)
     create_datetime = Column(DateTime, nullable=False, default=dt.datetime.now)
 
     @property
     def id(self):
-        return self.account_id
+        return self.user_id
 
     @id.setter
     def id(self, value):
-        self.account_id = value
+        self.user_id = value
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -45,7 +44,7 @@ class Account(Model):
 
     def to_dict(self):
         d = dict(
-            id=self.account_id,
+            id=self.user_id,
             username=self.username,
             create_datetime=dt.datetime.strftime(self.create_datetime, '%Y-%m-%d %H:%M:%S')
         )
@@ -53,41 +52,63 @@ class Account(Model):
 
     @staticmethod
     def init_data():
-        admin = Account.query.get(1)
+        admin = User.query.get(1)
         if not admin:
-            admin = Account()
+            admin = User()
         admin.username = 'admin'
         admin.set_password('admin')
         db.session.add(admin)
 
         db.session.commit()
 
+
 ##############################################################################
 # Role
 
+ADMINISTRATOR = 'ADMINISTRATOR'
+USER = 'USER'
 
-@unique
-class RoleEnum(Enum):
-    Administrator = 1
-    User = 2
+ALL_ROLES = (
+    ADMINISTRATOR, USER
+)
 
 
-class RolesAccounts(Model):
-    '''角色和帐户关联表'''
-    __tablename__ = 'roles_accounts'
+class RolesUsers(Model):
+    """角色和帐户关联表"""
+    __tablename__ = 'roles_users'
     id = Column(Integer, primary_key=True)
     role_id = Column(Integer, ForeignKey('role.role_id'))
-    account_id = Column(Integer, ForeignKey('account.account_id'))
+    user_id = Column(Integer, ForeignKey('user.user_id'))
 
 
-class Role(Model):
-    '''角色'''
+# role父类多对多表
+roles_parents = db.Table(
+    'roles_parents',
+    db.Column('role_id', db.Integer, db.ForeignKey('role.role_id')),
+    db.Column('parent_id', db.Integer, db.ForeignKey('role.role_id'))
+)
+
+
+@rbac.as_role_model
+class Role(Model, RoleMixin):
+    """角色"""
     __tablename__ = 'role'
     role_id = Column(Integer, primary_key=True)
     name = Column(String(30), unique=True)
 
     # relationship
-    accounts = relationship('Account', secondary='roles_accounts', backref='roles')
+    users = relationship(
+        'User',
+        secondary='roles_users',
+        backref=db.backref('roles', lazy='dynamic')
+    )
+    parents = db.relationship(
+        'Role',
+        secondary=roles_parents,
+        primaryjoin=(role_id == roles_parents.c.role_id),
+        secondaryjoin=(role_id == roles_parents.c.parent_id),
+        backref=db.backref('children', lazy='dynamic')
+    )
 
     @property
     def id(self):
@@ -103,12 +124,10 @@ class Role(Model):
 
     @staticmethod
     def init_data():
-        for role_enum in RoleEnum:
-            role = Role.query.get(role_enum.value)
+        for rolename in ALL_ROLES:
+            role = Role.query.filter_by(name=rolename).first()
             if not role:
-                role = Role()
-            role.role_id = role_enum.value
-            role.name = role_enum.name
+                role = Role(name=rolename)
             db.session.add(role)
         db.session.commit()
 
@@ -116,21 +135,23 @@ class Role(Model):
 # Permission
 
 
-@unique
-class PermissionEnum(Enum):
-    Administration = 1
+ADMINISTRATION = 'ADMINISTRATION'
+
+ALL_PERMISSIONS = (
+    ADMINISTRATION,
+)
 
 
 class PermissionsAccounts(Model):
-    '''权限和帐户关联表'''
-    __tablename__ = 'permissions_accounts'
+    """权限和帐户关联表"""
+    __tablename__ = 'permissions_users'
     id = Column(Integer, primary_key=True)
     permission_id = Column(Integer, ForeignKey('permission.permission_id'))
-    account_id = Column(Integer, ForeignKey('account.account_id'))
+    user_id = Column(Integer, ForeignKey('user.user_id'))
 
 
 class PermissionsRoles(Model):
-    '''权限和角色关联表'''
+    """权限和角色关联表"""
     __tablename__ = 'permissions_roles'
     id = Column(Integer, primary_key=True)
     permission_id = Column(Integer, ForeignKey('permission.permission_id'))
@@ -138,14 +159,14 @@ class PermissionsRoles(Model):
 
 
 class Permission(Model):
-    '''权限'''
+    """权限"""
     __tablename__ = 'permission'
     permission_id = Column(Integer, primary_key=True)
     name = Column(String(30), unique=True)
 
     # relationship
     roles = relationship('Role', secondary='permissions_roles', backref='permissions')
-    accounts = relationship('Account', secondary='permissions_accounts', backref='permissions')
+    users = relationship('User', secondary='permissions_users', backref='permissions')
 
     @property
     def id(self):
@@ -161,11 +182,9 @@ class Permission(Model):
 
     @staticmethod
     def init_data():
-        for permission_enum in PermissionEnum:
-            p = Permission.query.get(permission_enum.value)
+        for permission_name in ALL_PERMISSIONS:
+            p = Permission.query.filter_by(name=permission_name).first()
             if not p:
-                p = Permission()
-            p.id = permission_enum.value
-            p.name = permission_enum.name
+                p = Permission(name=permission_name)
             db.session.add(p)
         db.session.commit()
