@@ -142,7 +142,7 @@ ALL_PERMISSIONS = (
 )
 
 
-class PermissionsAccounts(Model):
+class PermissionsUsers(Model):
     """权限和帐户关联表"""
     __tablename__ = 'permissions_users'
     id = Column(Integer, primary_key=True)
