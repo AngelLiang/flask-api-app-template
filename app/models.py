@@ -110,6 +110,27 @@ class Role(Model, RoleMixin):
         backref=db.backref('children', lazy='dynamic')
     )
 
+    # flask_rbac
+
+    def __init__(self, name):
+        RoleMixin.__init__(self)
+        self.name = name
+
+    def add_parent(self, parent):
+        # You don't need to add this role to parent's children set,
+        # relationship between roles would do this work automatically
+        self.parents.append(parent)
+
+    def add_parents(self, *parents):
+        for parent in parents:
+            self.add_parent(parent)
+
+    @staticmethod
+    def get_by_name(name):
+        return Role.query.filter_by(name=name).first()
+
+    # flask_rbac end
+
     @property
     def id(self):
         return self.role_id
