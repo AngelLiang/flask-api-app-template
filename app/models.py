@@ -123,13 +123,13 @@ class Role(Model, RoleMixin):
         return d
 
     @staticmethod
-    def init_data():
+    def init_data(commit=True):
         for rolename in ALL_ROLES:
             role = Role.query.filter_by(name=rolename).first()
             if not role:
                 role = Role(name=rolename)
-            db.session.add(role)
-        db.session.commit()
+                db.session.add(role)
+        return commit and db.session.commit()
 
 ##############################################################################
 # Permission
@@ -181,10 +181,10 @@ class Permission(Model):
         return d
 
     @staticmethod
-    def init_data():
+    def init_data(commit=True):
         for permission_name in ALL_PERMISSIONS:
             p = Permission.query.filter_by(name=permission_name).first()
             if not p:
                 p = Permission(name=permission_name)
-            db.session.add(p)
-        db.session.commit()
+                db.session.add(p)
+        return commit and db.session.commit()
