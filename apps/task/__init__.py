@@ -12,8 +12,8 @@ BASEDIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, BASEDIR)
 
 # 加载环境变量
-# from flask.cli import load_dotenv
-# load_dotenv()
+from flask.cli import load_dotenv
+load_dotenv()
 
 from celery import Celery
 # settings
