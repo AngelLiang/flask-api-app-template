@@ -107,7 +107,18 @@ class Role(Model, RoleMixin):
         secondary=roles_parents,
         primaryjoin=(role_id == roles_parents.c.role_id),
         secondaryjoin=(role_id == roles_parents.c.parent_id),
-        backref=db.backref('children', lazy='dynamic')
+        # lazy='select'
+        # select - items should be loaded lazily when the property is first
+        # accessed, using a separate SELECT statement, or identity map fetch
+        # for simple many-to-one references.
+        # dynamic - the attribute will return a pre-configured Query object
+        # for all read operations, onto which further filtering operations
+        # can be applied before iterating the results. See the section Dynamic
+        # Relationship Loaders for more details.
+
+        backref=db.backref('children')
+        # backref=db.backref('children', lazy='dynamic')
+
     )
 
     # flask_rbac
