@@ -15,7 +15,7 @@ DateTime = db.DateTime
 
 
 class Task(Model):
-    '''任务'''
+    """任务"""
     __tablename__ = 'task'
     task_id = Column(Integer, primary_key=True)
     task_uuid = Column(String(128), nullable=False, default='')

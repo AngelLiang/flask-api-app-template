@@ -8,8 +8,6 @@ from flask import Flask
 from apps.web.extensions import db
 from apps.web.settings import config
 
-from .errors import register_errors
-
 
 def create_app(config_name=None):
     if config_name is None:
@@ -25,7 +23,6 @@ def create_app(config_name=None):
     register_apis(app)
     register_shell_context(app)
     register_commands(app)
-    register_errors(app)
 
     return app
 
@@ -35,11 +32,7 @@ def register_extensions(app):
 
 
 def register_apis(app):
-    from apps.web.auth.apis import auth_bp
-    from apps.web.user.apis import user_bp
     from apps.web.task.apis import task_bp
-    app.register_blueprint(auth_bp, url_prefix='/api/v1')
-    app.register_blueprint(user_bp, url_prefix='/api/v1')
     app.register_blueprint(task_bp, url_prefix='/api/v1')
 
 
