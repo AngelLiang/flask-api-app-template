@@ -2,7 +2,15 @@
 # flake8: noqa
 """
 Run:
-    celery worker -A apps.task.celery --loglevel=info
+
+    celery worker -A apps.task.celery -l info -c 1
+
+Shell Test:
+
+    celery shell -A apps.task.celery
+    >>> task.apply_async(('data', )).get(timeout=3)
+    >>> send_email.apply_async(('hello', 'email@mail.com')).get(timeout=3)
+
 """
 
 import os

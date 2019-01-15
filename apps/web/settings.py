@@ -20,6 +20,17 @@ class BaseConfig(object):
     SECRET_KEY = os.getenv("SECRET_KEY") or "secret string"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # ### MAIL ###
+    MAIL_DEBUG = True
+    MAIL_SERVER = os.getenv('MAIL_SERVER')
+    MAIL_PORT = int(os.getenv('MAIL_PORT', default=587))
+    MAIL_USE_SSL = os.getenv('MAIL_USE_SSL', default=False)
+    MAIL_USE_TLS = os.getenv('MAIL_USE_TLS', default=False)
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME')
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+    # 默认发信人由一个两元素元组组成，即（姓名，邮箱地址）
+    MAIL_DEFAULT_SENDER = ('flask-api-app-template', os.getenv('MAIL_USERNAME', default='noreply@example.com'))
+
 
 class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = prefix + os.path.join(BASEDIR, "data-dev.db")

@@ -5,7 +5,7 @@ import os
 # import click
 from flask import Flask
 
-from apps.web.extensions import db
+from apps.web.extensions import db, mail
 from apps.web.settings import config
 
 
@@ -29,6 +29,7 @@ def create_app(config_name=None):
 
 def register_extensions(app):
     db.init_app(app)
+    mail.init_app(app)
 
 
 def register_apis(app):
