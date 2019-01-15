@@ -38,9 +38,9 @@ class UserAPI(MethodView):
     decorators = [api_login_required]
 
     def get(self):
-        '''
+        """
         GET /api/v1/user
-        '''
+        """
         page = request.args.get('page', default=1, type=int)
         number = request.args.get('number', default=10, type=int)
 
@@ -54,9 +54,9 @@ class UserAPI(MethodView):
         return jsonify(JsonResponse.success(data=data))
 
     def post(self):
-        '''
+        """
         POST /api/v1/user
-        '''
+        """
         username = request.values.get('username')
         password = request.values.get('password')
 
@@ -80,9 +80,9 @@ class UserIdAPI(MethodView):
     decorators = [api_login_required]
 
     def get(self, id_):
-        '''
+        """
         GET /api/v1/user/<id_>
-        '''
+        """
         user = User.query.get(id_)
         if not user:
             raise WebException.NotFoundException()
@@ -90,9 +90,9 @@ class UserIdAPI(MethodView):
         return jsonify(JsonResponse.success(data=data))
 
     def post(self, id_):
-        '''
+        """
         POST /api/v1/user/<id_>
-        '''
+        """
         username = request.values.get('username')
         password = request.values.get('password')
 
@@ -109,9 +109,9 @@ class UserIdAPI(MethodView):
         return jsonify(JsonResponse.success(data=data))
 
     def delete(self, id_):
-        '''
+        """
         DELETE /api/v1/user/<id_>
-        '''
+        """
         user = User.query.get(id_)
         if not user:
             raise WebException.NotFoundException()

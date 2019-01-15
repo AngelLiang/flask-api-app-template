@@ -19,21 +19,21 @@ Boolean = db.Boolean
 DateTime = db.DateTime
 
 
-class Account(Model):
-    '''帐户'''
-    __tablename__ = 'account'
-    account_id = Column(Integer, primary_key=True)
+class User(Model):
+    """帐户"""
+    __tablename__ = 'user'
+    user_id = Column(Integer, primary_key=True)
     username = Column(String(20), unique=True, index=True)
     password_hash = Column(String(128), nullable=False)
     create_datetime = Column(DateTime, nullable=False, default=dt.datetime.now)
 
     @property
     def id(self):
-        return self.account_id
+        return self.user_id
 
     @id.setter
     def id(self, value):
-        self.account_id = value
+        self.user_id = value
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -43,7 +43,7 @@ class Account(Model):
 
     def to_dict(self):
         d = dict(
-            id=self.account_id,
+            id=self.user_id,
             username=self.username,
             create_datetime=dt.datetime.strftime(
                 self.create_datetime, '%Y-%m-%d %H:%M:%S')
@@ -52,14 +52,10 @@ class Account(Model):
 
     @staticmethod
     def init_data(commit=True):
-        admin = Account.query.filter_by(username='admin').first()
-        if admin:
-            admin = Account()
+        admin = User.query.filter_by(username='admin').first()
+        if not admin:
+            admin = User()
         admin.username = 'admin'
         admin.set_password('admin')
         db.session.add(admin)
-
         return commit and db.session.commit()
-
-
-User = Account

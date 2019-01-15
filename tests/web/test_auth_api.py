@@ -27,7 +27,7 @@ class AuthAPITestCase(unittest.TestCase):
         self.context.pop()
 
     def test_1_user_login(self):
-        '''用户登录'''
+        """用户登录"""
         self.util.create_user(username='admin', password='admin')
         response = self.util.login(username='admin', password='admin')
         data = response.get_json()
@@ -37,7 +37,7 @@ class AuthAPITestCase(unittest.TestCase):
         self.assertIsNotNone(data['data']['token'])
 
     def test_2_user_logout(self):
-        '''用户登出'''
+        """用户登出"""
         self.util.create_user(username='admin', password='admin')
         token = self.util.get_token(username='admin', password='admin')
         response = self.client.post(url_for('auth_bp.logout'), data=dict(

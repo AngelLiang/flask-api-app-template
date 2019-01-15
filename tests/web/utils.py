@@ -10,7 +10,7 @@ from apps.web.user.models import User
 
 
 class TestUtil(object):
-    '''测试用例辅助工具'''
+    """测试用例辅助工具"""
 
     def __init__(self, client):
         self.client = client

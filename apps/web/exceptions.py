@@ -1,12 +1,11 @@
 # coding=utf-8
 
 
-class APIBaseException(Exception):
-    def __init__(self, message=None):
-        self.message = message
-
-
 class WebException(object):
+
+    class APIBaseException(Exception):
+        def __init__(self, message=None):
+            self.message = message
 
     class FailException(APIBaseException):
         pass
