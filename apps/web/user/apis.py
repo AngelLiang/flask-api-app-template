@@ -7,7 +7,6 @@ from flask import request, jsonify, Blueprint
 from flask.views import MethodView
 
 from apps.web.extensions import db, CORS
-from apps.web.exceptions import WebException
 from apps.web.utils import JsonResponse, paginate2dict
 from apps.web.auth.decorator import api_login_required
 from apps.web.user.models import User
@@ -38,9 +37,9 @@ class UserAPI(MethodView):
     decorators = [api_login_required]
 
     def get(self):
-        '''
+        """
         GET /api/v1/user
-        '''
+        """
         page = request.args.get('page', default=1, type=int)
         number = request.args.get('number', default=10, type=int)
 
@@ -54,14 +53,14 @@ class UserAPI(MethodView):
         return jsonify(JsonResponse.success(data=data))
 
     def post(self):
-        '''
+        """
         POST /api/v1/user
-        '''
+        """
         username = request.values.get('username')
         password = request.values.get('password')
 
         if username is None or password is None:
-            raise WebException.ParameterMissException()
+            raise ValueError()
 
         user = User()
         user.username = username
@@ -80,25 +79,25 @@ class UserIdAPI(MethodView):
     decorators = [api_login_required]
 
     def get(self, id_):
-        '''
+        """
         GET /api/v1/user/<id_>
-        '''
+        """
         user = User.query.get(id_)
         if not user:
-            raise WebException.NotFoundException()
+            raise ValueError()
         data = user.to_dict()
         return jsonify(JsonResponse.success(data=data))
 
     def post(self, id_):
-        '''
+        """
         POST /api/v1/user/<id_>
-        '''
+        """
         username = request.values.get('username')
         password = request.values.get('password')
 
         user = User.query.get(id_)
         if not user:
-            raise WebException.NotFoundException()
+            raise ValueError()
         if username:
             user.username = username
         if password:
@@ -109,12 +108,12 @@ class UserIdAPI(MethodView):
         return jsonify(JsonResponse.success(data=data))
 
     def delete(self, id_):
-        '''
+        """
         DELETE /api/v1/user/<id_>
-        '''
+        """
         user = User.query.get(id_)
         if not user:
-            raise WebException.NotFoundException()
+            raise ValueError()
         db.session.delete(user)
         db.session.commit()
         return jsonify(JsonResponse.success())

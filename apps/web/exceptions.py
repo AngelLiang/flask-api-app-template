@@ -6,22 +6,25 @@ class APIBaseException(Exception):
         self.message = message
 
 
-class WebException(object):
+class FailException(APIBaseException):
+    pass
 
-    class FailException(APIBaseException):
-        pass
 
-    class NotFoundException(APIBaseException):
-        pass
+class NotFoundException(APIBaseException):
+    pass
 
-    class ParameterMissException(APIBaseException):
-        pass
 
-    class ParameterErrorException(APIBaseException):
-        pass
+class ParameterMissException(APIBaseException):
+    pass
 
-    class TokenTimeOutException(APIBaseException):
-        pass
 
-    class TokenErrorException(APIBaseException):
-        pass
+class ParameterErrorException(APIBaseException):
+    pass
+
+
+class TokenTimeOutException(APIBaseException):
+    pass
+
+
+class TokenErrorException(APIBaseException):
+    pass

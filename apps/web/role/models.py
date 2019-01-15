@@ -23,25 +23,22 @@ class RoleEnum(Enum):
     User = 2
 
 
-class RolesAccounts(Model):
-    '''角色和帐户关联表'''
-    __tablename__ = 'roles_accounts'
+class RolesUsers(Model):
+    """角色和帐户关联表"""
+    __tablename__ = 'roles_users'
     id = Column(Integer, primary_key=True)
     role_id = Column(Integer, ForeignKey('role.role_id'))
-    account_id = Column(Integer, ForeignKey('account.account_id'))
+    user_id = Column(Integer, ForeignKey('user.user_id'))
 
 
 class Role(Model):
-    '''角色'''
+    """角色"""
     __tablename__ = 'role'
     role_id = Column(Integer, primary_key=True)
     name = Column(String(30), unique=True)
 
     # relationship
-    permissions = relationship(
-        'Permission', secondary='permissions_roles', back_populates='roles')
-    accounts = relationship(
-        'Account', secondary='roles_accounts', backref='roles')
+    users = relationship('User', secondary='roles_users', backref='roles')
 
     @property
     def id(self):

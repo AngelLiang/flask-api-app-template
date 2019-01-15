@@ -10,15 +10,17 @@ from apps.web.user.models import User
 
 
 class TestUtil(object):
-    '''测试用例辅助工具'''
+    """测试用例辅助工具"""
 
     def __init__(self, client):
         self.client = client
 
     @staticmethod
-    def create_user(username, password):
-        user = User()
-        user.username = username
+    def get_or_create_user(username, password):
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            user = User()
+            user.username = username
         user.set_password(password)
         db.session.add(user)
         db.session.commit()

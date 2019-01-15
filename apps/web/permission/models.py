@@ -22,16 +22,16 @@ class PermissionEnum(Enum):
     Administration = 1
 
 
-class PermissionsAccounts(Model):
-    '''权限和帐户关联表'''
-    __tablename__ = 'permissions_accounts'
+class PermissionsUsers(Model):
+    """权限和用户关联表"""
+    __tablename__ = 'permissions_users'
     id = Column(Integer, primary_key=True)
     permission_id = Column(Integer, ForeignKey('permission.permission_id'))
-    account_id = Column(Integer, ForeignKey('account.account_id'))
+    user_id = Column(Integer, ForeignKey('user.user_id'))
 
 
 class PermissionsRoles(Model):
-    '''权限和角色关联表'''
+    """权限和角色关联表"""
     __tablename__ = 'permissions_roles'
     id = Column(Integer, primary_key=True)
     permission_id = Column(Integer, ForeignKey('permission.permission_id'))
@@ -39,15 +39,16 @@ class PermissionsRoles(Model):
 
 
 class Permission(Model):
-    '''权限'''
+    """权限"""
     __tablename__ = 'permission'
     permission_id = Column(Integer, primary_key=True)
     name = Column(String(30), unique=True)
 
     # relationship
-    roles = relationship('Role', secondary='permissions_roles',
-                         back_populates='permissions')
-    accounts = relationship('Account', secondary='permissions_accounts')
+    roles = relationship(
+        'Role', secondary='permissions_roles', backref='permissions')
+    users = relationship(
+        'User', secondary='permissions_users', backref='permissions')
 
     @property
     def id(self):

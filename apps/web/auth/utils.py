@@ -11,7 +11,7 @@ from apps.web.user.models import User
 
 
 def get_token():
-    '''获取token'''
+    """获取token"""
     # 首先从header获取token，如果没有则从参数中获取token
     token = request.headers.get("Authorization") or request.values.get("token")
     return token
@@ -25,7 +25,7 @@ def generate_token(user, expiration=60 * 60 * 8):
 
 
 def validate_token(token):
-    '''验证token'''
+    """验证token"""
     if not token:
         return None
     s = Serializer(current_app.config['SECRET_KEY'])
