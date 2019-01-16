@@ -32,14 +32,14 @@ def validate_token(token):
     try:
         data = s.loads(token)
     except BadSignature:
-        raise exceptions.TokenErrorException()
+        raise
         # return False
     except SignatureExpired:
-        raise exceptions.TokenTimeOutException()
+        raise
         # return False
     user = User.query.get(data["user_id"])  # 使用令牌中的id来查询对应的用户对象
     if user is None:
-        raise exceptions.NotFoundException("没有该用户！")
+        raise
         # return False
     g.current_user = user  # 将用户对象存储到g上
     return user

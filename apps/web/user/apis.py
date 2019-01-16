@@ -7,7 +7,11 @@ from flask import request, jsonify, Blueprint
 from flask.views import MethodView
 
 from apps.web.extensions import db, CORS
-from apps.web.exceptions import WebException
+
+from apps.web.exceptions import NotFoundException
+from apps.web.exceptions import ParameterMissingException
+# from apps.web.exceptions import ParameterErrorException
+
 from apps.web.utils import JsonResponse, paginate2dict
 from apps.web.auth.decorator import api_login_required
 from apps.web.user.models import User
@@ -61,7 +65,7 @@ class UserAPI(MethodView):
         password = request.values.get('password')
 
         if username is None or password is None:
-            raise WebException.ParameterMissException()
+            raise ParameterMissingException()
 
         user = User()
         user.username = username
@@ -85,7 +89,7 @@ class UserIdAPI(MethodView):
         """
         user = User.query.get(id_)
         if not user:
-            raise WebException.NotFoundException()
+            raise NotFoundException()
         data = user.to_dict()
         return jsonify(JsonResponse.success(data=data))
 
@@ -98,7 +102,7 @@ class UserIdAPI(MethodView):
 
         user = User.query.get(id_)
         if not user:
-            raise WebException.NotFoundException()
+            raise NotFoundException()
         if username:
             user.username = username
         if password:
@@ -114,11 +118,10 @@ class UserIdAPI(MethodView):
         """
         user = User.query.get(id_)
         if not user:
-            raise WebException.NotFoundException()
+            raise NotFoundException()
         db.session.delete(user)
         db.session.commit()
         return jsonify(JsonResponse.success())
 
 
-user_bp.add_url_rule(
-    '/user/<id_>', view_func=UserIdAPI.as_view('user_id_api'))
+user_bp.add_url_rule('/user/<id_>', view_func=UserIdAPI.as_view('user_id_api'))

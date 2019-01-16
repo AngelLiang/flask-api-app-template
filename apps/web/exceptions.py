@@ -1,26 +1,30 @@
 # coding=utf-8
 
 
-class WebException(object):
+class APIException(Exception):
+    def __init__(self, message=None):
+        self.message = message
 
-    class APIBaseException(Exception):
-        def __init__(self, message=None):
-            self.message = message
 
-    class FailException(APIBaseException):
-        pass
+class FailException(APIException):
+    pass
 
-    class NotFoundException(APIBaseException):
-        pass
 
-    class ParameterMissException(APIBaseException):
-        pass
+class NotFoundException(APIException):
+    pass
 
-    class ParameterErrorException(APIBaseException):
-        pass
 
-    class TokenTimeOutException(APIBaseException):
-        pass
+class ParameterMissingException(APIException):
+    pass
 
-    class TokenErrorException(APIBaseException):
-        pass
+
+class ParameterErrorException(APIException):
+    pass
+
+
+class TokenTimeOutException(APIException):
+    pass
+
+
+class TokenErrorException(APIException):
+    pass

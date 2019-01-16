@@ -3,70 +3,61 @@
 from flask import jsonify
 
 from apps.web.utils import JsonResponse
-from apps.web.exceptions import WebException  # noqa
+from apps.web.exceptions import APIException, FailException
+from apps.web.exceptions import NotFoundException
+from apps.web.exceptions import ParameterErrorException, ParameterMissingException
+from apps.web.exceptions import TokenErrorException, TokenTimeOutException
+
+
+def _get_json_response(e, json_callback):
+    message = getattr(e, 'message')
+    if message:
+        json_response = json_callback(message=message)
+    else:
+        json_response = json_callback()
+    return json_response
 
 
 def register_errors(app):
 
-    @app.errorhandler(WebException.APIBaseException)
+    @app.errorhandler(APIException)
     def api_base_error_handle(e):
         json_callback = JsonResponse.fail
-        if e.args:
-            json_response = json_callback(message=e.args[0])
-        else:
-            json_response = json_callback()
+        json_response = _get_json_response(e, json_callback)
         return jsonify(json_response)
 
-    @app.errorhandler(WebException.FailException)
+    @app.errorhandler(FailException)
     def fail_handle(e):
         json_callback = JsonResponse.fail
-        if e.args:
-            json_response = json_callback(message=e.args[0])
-        else:
-            json_response = json_callback()
+        json_response = _get_json_response(e, json_callback)
         return jsonify(json_response)
 
-    @app.errorhandler(WebException.NotFoundException)
+    @app.errorhandler(NotFoundException)
     def not_found_handle(e):
         json_callback = JsonResponse.not_found
-        if e.args:
-            json_response = json_callback(message=e.args[0])
-        else:
-            json_response = json_callback()
+        json_response = _get_json_response(e, json_callback)
         return jsonify(json_response)
 
-    @app.errorhandler(WebException.ParameterMissException)
+    @app.errorhandler(ParameterMissingException)
     def parameter_miss_handle(e):
         json_callback = JsonResponse.parameter_miss
-        if e.args:
-            json_response = json_callback(message=e.args[0])
-        else:
-            json_response = json_callback()
+        json_response = _get_json_response(e, json_callback)
         return jsonify(json_response)
 
-    @app.errorhandler(WebException.ParameterErrorException)
+    @app.errorhandler(ParameterErrorException)
     def parameter_error_handle(e):
         json_callback = JsonResponse.parameter_error
-        if e.args:
-            json_response = json_callback(message=e.args[0])
-        else:
-            json_response = json_callback()
+        json_response = _get_json_response(e, json_callback)
         return jsonify(json_response)
 
-    @app.errorhandler(WebException.TokenTimeOutException)
+    @app.errorhandler(TokenTimeOutException)
     def token_time_out_handle(e):
         json_callback = JsonResponse.token_timeout
-        if e.args:
-            json_response = json_callback(message=e.args[0])
-        else:
-            json_response = json_callback()
+        json_response = _get_json_response(e, json_callback)
         return jsonify(json_response)
 
-    @app.errorhandler(WebException.TokenErrorException)
+    @app.errorhandler(TokenErrorException)
     def token_error_handle(e):
         json_callback = JsonResponse.token_error
-        if e.args:
-            json_response = json_callback(message=e.args[0])
-        else:
-            json_response = json_callback()
+        json_response = _get_json_response(e, json_callback)
         return jsonify(json_response)
