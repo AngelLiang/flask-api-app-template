@@ -29,16 +29,32 @@ class User(Model):
     password_hash = Column(String(128), nullable=False)
 
     # ### 帐号状态信息 ###
+
+    # 帐号启用状态，创建帐号时为False
+    # 可以管理员手动激活，或者发送confirm-email时激活
+    # 管理员可以标识此字段禁用用户
     is_active = Column(Boolean, nullable=False, default=False)
+    state = Column(String(10), nullable=False, default='')
+    # 创建时间
     create_datetime = Column(DateTime, nullable=False, default=dt.datetime.now)
 
     # ### 用户信息 ###
     fullname = Column(String(20), nullable=False, default='')
-    email = Column(String(128), nullable=False, index=True, default='')
+    # 邮箱
+    email = Column(String(255), nullable=False, default='')
+    # 邮件确认标志
+    # 当用户点击confirm-emil中的链接后，表示确认用户使用该邮箱
+    is_email_confirm = Column(Boolean, nullable=False, default=False)
+    # 手机号码
     phone = Column(String(20), nullable=False, default='')
+    # 手机号码确认标识
+    is_phone_confirm = Column(Boolean, nullable=False, default=False)
 
     # 存储json格式的额外信息
     additional_info = Column(db.Text(), nullable=False, default='')
+
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
 
     @property
     def id(self):
@@ -68,9 +84,15 @@ class User(Model):
         d = dict(
             id=self.user_id,
             username=self.username,
+
+            is_active=self.is_active,
             create_datetime=dt.datetime.strftime(self.create_datetime, '%Y-%m-%d %H:%M:%S'),
+
             fullname=self.fullname,
-            phone=self.phone
+            email=self.email,
+            is_email_confirm=self.is_email_confirm,
+            phone=self.phone,
+            is_phone_confirm=self.is_phone_confirm
         )
         return d
 
