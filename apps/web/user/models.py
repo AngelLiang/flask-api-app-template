@@ -24,13 +24,17 @@ class User(Model):
     """用户"""
     __tablename__ = 'user'
     user_id = Column(Integer, primary_key=True)
+    # ### 帐号基本字段 ###
     username = Column(String(20), unique=True, index=True)
     password_hash = Column(String(128), nullable=False)
+
+    # ### 帐号状态信息 ###
+    is_active = Column(Boolean, nullable=False, default=False)
     create_datetime = Column(DateTime, nullable=False, default=dt.datetime.now)
 
     # ### 用户信息 ###
     fullname = Column(String(20), nullable=False, default='')
-    email = Column(String(128), nullable=False, default='', index=True)
+    email = Column(String(128), nullable=False, index=True, default='')
     phone = Column(String(20), nullable=False, default='')
 
     # 存储json格式的额外信息
