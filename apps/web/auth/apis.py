@@ -17,6 +17,9 @@ CORS(auth_bp)
 
 @auth_bp.route("/auth/login", methods=["POST"])
 def login():
+    """
+    file: docs/login.yml
+    """
     username = request.values.get("username")
     password = request.values.get("password")
     if username is None or password is None:
@@ -35,5 +38,8 @@ from .decorator import api_login_required
 @auth_bp.route("/auth/logout", methods=["POST"])
 @api_login_required
 def logout():
+    """
+    file: docs/logout.yml
+    """
     # TODO
     return jsonify(JsonResponse.success())
