@@ -27,6 +27,9 @@ class User(Model):
     password_hash = Column(String(128), nullable=False)
     create_datetime = Column(DateTime, nullable=False, default=dt.datetime.now)
 
+    # 存储json格式的额外信息
+    additional_info = Column(db.Text(), nullable=False, default='')
+
     @property
     def id(self):
         return self.user_id
