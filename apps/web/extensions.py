@@ -12,6 +12,7 @@ db = SQLAlchemy()
 cors = CORS()
 
 template = dict(
-    host=LazyString(lambda: request.host)
+    host=LazyString(lambda: request.host),
+    base_url=LazyString(lambda: request.base_url)
 )
 swagger = Swagger(template=template)

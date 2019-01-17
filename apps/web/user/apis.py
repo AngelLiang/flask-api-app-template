@@ -2,6 +2,8 @@
 
 from sqlalchemy import func
 
+from flasgger.utils import swag_from
+
 from flask import current_app, g
 from flask import request, jsonify, Blueprint
 from flask.views import MethodView
@@ -31,6 +33,7 @@ def user_info():
 
 @user_bp.route("/user/total", methods=["GET"])
 @api_login_required
+@swag_from('docs/user_total.yml')
 def user_total():
     total = db.session.query(func.count('*')).select_from(User).scalar()
     data = {'total': total}
@@ -41,6 +44,7 @@ class UserAPI(MethodView):
 
     decorators = [api_login_required]
 
+    @swag_from('docs/user_api/get.yml')
     def get(self):
         """
         GET /api/v1/user
@@ -57,6 +61,7 @@ class UserAPI(MethodView):
         current_app.logger.debug(data)
         return jsonify(JsonResponse.success(data=data))
 
+    @swag_from('docs/user_api/post.yml')
     def post(self):
         """
         POST /api/v1/user
@@ -83,24 +88,26 @@ user_bp.add_url_rule('/user', view_func=UserAPI.as_view('user_api'))
 class UserIdAPI(MethodView):
     decorators = [api_login_required]
 
-    def get(self, id_):
+    @swag_from('docs/user_id_api/get.yml')
+    def get(self, user_id):
         """
-        GET /api/v1/user/<id_>
+        GET /api/v1/user/<user_id>
         """
-        user = User.query.get(id_)
+        user = User.query.get(user_id)
         if not user:
             raise NotFoundException()
         data = user.to_dict()
         return jsonify(JsonResponse.success(data=data))
 
-    def post(self, id_):
+    @swag_from('docs/user_id_api/post.yml')
+    def post(self, user_id):
         """
-        POST /api/v1/user/<id_>
+        POST /api/v1/user/<user_id>
         """
         username = request.values.get('username')
         password = request.values.get('password')
 
-        user = User.query.get(id_)
+        user = User.query.get(user_id)
         if not user:
             raise NotFoundException()
         if username:
@@ -112,11 +119,12 @@ class UserIdAPI(MethodView):
         data = user.to_dict()
         return jsonify(JsonResponse.success(data=data))
 
-    def delete(self, id_):
+    @swag_from('docs/user_id_api/delete.yml')
+    def delete(self, user_id):
         """
-        DELETE /api/v1/user/<id_>
+        DELETE /api/v1/user/<user_id>
         """
-        user = User.query.get(id_)
+        user = User.query.get(user_id)
         if not user:
             raise NotFoundException()
         db.session.delete(user)
@@ -124,4 +132,4 @@ class UserIdAPI(MethodView):
         return jsonify(JsonResponse.success())
 
 
-user_bp.add_url_rule('/user/<id_>', view_func=UserIdAPI.as_view('user_id_api'))
+user_bp.add_url_rule('/user/<user_id>', view_func=UserIdAPI.as_view('user_id_api'))

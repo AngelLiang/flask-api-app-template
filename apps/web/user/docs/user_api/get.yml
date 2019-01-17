@@ -1,0 +1,75 @@
+Get User Model List
+---
+tags:
+  - user
+parameters:
+  - name: Authorization
+    in: header
+    type: string
+    require: true
+    description: token
+responses:
+  200:
+    description: OK
+    produces:
+      - application/json
+    schema:
+      $ref: '#/definitions/UserApiResponse'
+
+definitions:
+  UserApiResponse:
+    properties:
+      code:
+        type: integer
+        require: true
+        example: 20000
+      message:
+        type: string
+        require: true
+        example: 'Success!'
+      request:
+        type: string
+        require: true
+        example: '{url}'
+      data:
+        type: object
+        require: true
+        $ref: '#/definitions/CommenModelResponseData'
+
+  CommenModelResponseData:
+    properties:
+      current_page:
+        type: integer
+        require: true
+        example: 1
+      has_prev:
+        type: boolean
+        require: true
+        example: false
+      has_next:
+        type: boolean
+        require: true
+        example: false
+      next_number:
+        type: integer
+        require: true
+        example: null
+      prev_number:
+        type: integer
+        require: true
+        example: null
+      total:
+        type: integer
+        require: false
+        example: 1
+      total_pages:
+        type: integer
+        require: true
+        example: 1
+      items:
+        type: object
+        example: []
+      items_size:
+        type: integer
+        require: true
+        example: 1

@@ -1,0 +1,39 @@
+Delete User Model by user_id
+---
+tags:
+  - user
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+parameters:
+  - name: Authorization
+    in: header
+    type: string
+    require: true
+    description: token
+  - in: path
+    name: user_id
+    require: true
+    default: 1
+
+responses:
+  200:
+    description: OK
+    schema:
+      type: object
+      properties:
+        code:
+          type: integer
+          require: true
+          example: 20000
+        message:
+          type: string
+          require: true
+          example: 'Success!'
+        request:
+          type: string
+          require: true
+          example: '{base_url}'

@@ -1,9 +1,8 @@
-用户登出
+Get Total User
 ---
 tags:
-  - auth
-
-post:
+  - user
+get:
   parameters:
     - name: Authorization
       in: header
@@ -13,14 +12,13 @@ post:
 
 responses:
   200:
-    description: 用户成功登出
-    produces:
-      - application/json
+    description: 请求成功
     schema:
-      $ref: '#/definitions/CommenResponse'
+      $ref: '#/definitions/CommenTotalResponse'
 
 definitions:
-  LogoutResponse:
+  CommenTotalResponse:
+    type: object
     properties:
       code:
         type: integer
@@ -36,4 +34,8 @@ definitions:
         example: '{url}'
       data:
         type: object
-        example: {}
+        properties:
+          total:
+            type: integer
+            require: true
+            example: 1

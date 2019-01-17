@@ -22,7 +22,7 @@ class BaseConfig(object):
     # swagger
     SWAGGER = {
         'title': 'Flask-API-APP-TEMPLATE',
-        'uiversion': 3
+        # 'uiversion': 3
     }
 
 

@@ -1,0 +1,42 @@
+Create a User Model
+---
+tags:
+  - user
+
+consumes:
+  - application/json
+
+parameters:
+  - name: Authorization
+    in: header
+    type: string
+    require: true
+    description: token
+  - in: body
+    name: User Information object
+    description:
+    schema:
+      type: object
+      properties:
+        username:
+          type: string
+          require: true
+          description: username
+        password:
+          type: string
+          require: true
+          description: password
+        is_active:
+          type: boolean
+          default: false
+        phone:
+          type: boolean
+          default: false
+
+responses:
+  200:
+    description: 请求成功
+    produces:
+      - application/json
+    schema:
+      $ref: '#/definitions/UserApiResponse'
