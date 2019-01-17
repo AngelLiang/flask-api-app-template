@@ -5,7 +5,7 @@ tags:
 post:
   parameters:
     - name: Authorization
-      in: headers
+      in: header
       type: string
       require: true
       description: token
