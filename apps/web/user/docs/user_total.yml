@@ -2,13 +2,13 @@ Get Total User
 ---
 tags:
   - user
-get:
-  parameters:
-    - name: Authorization
-      in: header
-      type: string
-      require: true
-      description: token
+
+parameters:
+  - name: Authorization
+    in: header
+    type: string
+    require: true
+    description: token
 
 responses:
   200:
@@ -31,7 +31,7 @@ definitions:
       request:
         type: string
         require: true
-        example: '{url}'
+        example: '{base_url}'
       data:
         type: object
         properties:
