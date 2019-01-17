@@ -4,6 +4,9 @@ from flask import Blueprint
 from flask import jsonify, request
 # from flask import current_app, g
 
+from flasgger.utils import swag_from
+
+
 from apps.web import exceptions
 from apps.web.extensions import CORS
 from apps.web.utils import JsonResponse
@@ -16,9 +19,10 @@ CORS(auth_bp)
 
 
 @auth_bp.route("/auth/login", methods=["POST"])
+@swag_from('docs/login.yml')
 def login():
     """
-    file: docs/login.yml
+    # file: docs/login.yml
     """
     username = request.values.get("username")
     password = request.values.get("password")
@@ -36,10 +40,11 @@ from .decorator import api_login_required
 
 
 @auth_bp.route("/auth/logout", methods=["POST"])
+@swag_from('docs/logout.yml')
 @api_login_required
 def logout():
     """
-    file: docs/logout.yml
+    # file: docs/logout.yml
     """
     # TODO
     return jsonify(JsonResponse.success())
