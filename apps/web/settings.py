@@ -19,6 +19,12 @@ class BaseConfig(object):
     SECRET_KEY = os.getenv("SECRET_KEY") or "secret string"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # swagger
+    SWAGGER = {
+        'title': 'Flask-API-APP-TEMPLATE',
+        'uiversion': 3
+    }
+
 
 class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = prefix + os.path.join(BASEDIR, "data-dev.db")
