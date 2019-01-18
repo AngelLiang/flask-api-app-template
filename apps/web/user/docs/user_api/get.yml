@@ -2,12 +2,14 @@ Get User Model List
 ---
 tags:
   - user
+
 parameters:
   - name: Authorization
     in: header
     type: string
     require: true
     description: token
+
 responses:
   200:
     description: OK
@@ -26,17 +28,17 @@ definitions:
       message:
         type: string
         require: true
-        example: 'Success!'
+        example: Success!
       request:
         type: string
         require: true
-        example: '{url}'
+        example: '#/host'
       data:
         type: object
         require: true
-        $ref: '#/definitions/CommenModelResponseData'
+        $ref: '#/definitions/CommenModelData'
 
-  CommenModelResponseData:
+  CommenModelData:
     properties:
       current_page:
         type: integer

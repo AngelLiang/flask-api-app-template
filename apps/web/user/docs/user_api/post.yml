@@ -35,7 +35,7 @@ parameters:
 
 responses:
   200:
-    description: 请求成功
+    description: OK
     produces:
       - application/json
     schema:

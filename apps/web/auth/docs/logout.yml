@@ -3,13 +3,12 @@
 tags:
   - auth
 
-post:
-  parameters:
-    - name: Authorization
-      in: header
-      type: string
-      require: true
-      description: token
+parameters:
+  - name: Authorization
+    in: header
+    type: string
+    require: true
+    description: token
 
 responses:
   200:
@@ -29,11 +28,11 @@ definitions:
       message:
         type: string
         require: true
-        example: 'Success!'
+        example: Success!
       request:
         type: string
         require: true
-        example: '{url}'
+        example: '#/host'
       data:
         type: object
         example: {}

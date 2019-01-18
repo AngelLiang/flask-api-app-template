@@ -5,8 +5,6 @@ tags:
 
 consumes:
   - application/json
-produces:
-  - application/json
 
 parameters:
   - name: Authorization
@@ -22,6 +20,8 @@ parameters:
 responses:
   200:
     description: OK
+    produces:
+      - application/json
     schema:
       type: object
       properties:
@@ -32,8 +32,8 @@ responses:
         message:
           type: string
           require: true
-          example: 'Success!'
+          example: Success!
         request:
           type: string
           require: true
-          example: '{base_url}'
+          example: '#/host'
