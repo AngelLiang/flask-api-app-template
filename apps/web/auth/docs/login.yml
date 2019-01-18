@@ -24,49 +24,53 @@ responses:
       $ref: '#/definitions/LoginResponse'
 
 definitions:
+  code:
+    type: integer
+    require: true
+    example: 20000
+    description: 业务响应码。
+      20000表示成功；40000表示失败。
+  message:
+    type: string
+    require: true
+    example: Success!
+    description: 业务响应说明
+
+  request:
+    type: string
+    require: true
+    example: http://127.0.0.1:5000/api/v1/auth/login
+    description: 请求的完整url
+
+  response_data:
+    type: object
+    require: false
+    example: {}
+    description: 存放额外的业务数据
+
   CommenResponse:
     properties:
       code:
-        type: integer
-        require: true
-        example: 20000
+        $ref: '#/definitions/code'
       message:
-        type: string
-        require: true
-        example: Success!
+        $ref: '#/definitions/message'
       request:
-        type: string
-        require: true
-        example:
-          $ref: '#/host'
+        $ref: '#/definitions/request'
       data:
-        type: object
-        example: {}
+        $ref: '#/definitions/response_data'
 
   LoginResponse:
     properties:
       code:
-        type: integer
-        require: true
-        example: 20000
+        $ref: '#/definitions/code'
       message:
-        type: string
-        require: true
-        example: Success!
+        $ref: '#/definitions/message'
       request:
-        type: string
-        require: true
-        example:
-          $ref: '#/host'
+        $ref: '#/definitions/request'
       data:
         type: object
-        example: {}
-
-securityDefinitions:
-  ApiKeyAuth:
-    type: apiKey
-    in: query
-    name: token
-
-security:
-  - ApiKeyAuth: []
+        require: false
+        example: { token: xxx }
+        properties:
+          token:
+            type: string

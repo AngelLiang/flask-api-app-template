@@ -26,19 +26,14 @@ responses:
       type: object
       properties:
         code:
-          type: integer
-          require: true
-          example: 20000
+          $ref: '#/definitions/code'
         message:
-          type: string
-          require: true
-          example: 'Success!'
+          $ref: '#/definitions/message'
         request:
-          type: string
-          require: true
-          example: '#/host'
+          $ref: '#/definitions/request'
         data:
           type: object
+          require: true
           $ref: '#/definitions/UserModel'
 
 definitions:
