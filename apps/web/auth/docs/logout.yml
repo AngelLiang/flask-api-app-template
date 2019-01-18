@@ -1,7 +1,7 @@
 用户登出
 ---
 tags:
-  - auth
+  - Auth
 
 parameters:
   - name: Authorization

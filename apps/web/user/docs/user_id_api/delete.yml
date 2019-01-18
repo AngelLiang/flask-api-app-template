@@ -1,7 +1,7 @@
 Delete User Model by user_id
 ---
 tags:
-  - user
+  - User
 
 consumes:
   - application/json

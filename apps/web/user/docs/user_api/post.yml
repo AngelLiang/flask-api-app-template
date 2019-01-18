@@ -1,7 +1,7 @@
 Create a User Model
 ---
 tags:
-  - user
+  - User
 
 consumes:
   - application/json

@@ -1,7 +1,7 @@
 用户登录
 ---
 tags:
-  - auth
+  - Auth
 
 parameters:
   - name: username
