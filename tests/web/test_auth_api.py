@@ -8,7 +8,7 @@ from apps.web import create_app
 from apps.web.extensions import db
 # from apps.web.user.models import User
 
-from .utils import TestUtil
+from .utils import create_user, user_login, get_token
 
 
 class AuthAPITestCase(unittest.TestCase):
@@ -20,24 +20,22 @@ class AuthAPITestCase(unittest.TestCase):
         self.runner = app.test_cli_runner()
         db.create_all()
 
-        self.util = TestUtil(self.client)
-
     def tearDown(self):
         db.drop_all()
         self.context.pop()
 
     def test_1_user_login(self):
         """用户登录"""
-        self.util.create_user(username='admin', password='admin')
-        response = self.util.login(username='admin', password='admin')
+        create_user(username='admin', password='admin')
+        response = user_login(self.client, username='admin', password='admin')
         data = response.get_json()
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(data['token'])
 
     def test_2_user_logout(self):
         """用户登出"""
-        self.util.create_user(username='admin', password='admin')
-        token = self.util.get_token(username='admin', password='admin')
+        create_user(username='admin', password='admin')
+        token = get_token(self.client, username='admin', password='admin')
         response = self.client.post(url_for('auth_bp.logout'), data=dict(
             token=token
         ))

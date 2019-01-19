@@ -8,7 +8,7 @@ from apps.web import create_app
 from apps.web.extensions import db
 # from apps.web.user.models import User
 
-from .utils import TestUtil
+from .utils import create_user, get_token
 
 
 class UserAPITestCase(unittest.TestCase):
@@ -20,16 +20,14 @@ class UserAPITestCase(unittest.TestCase):
         self.runner = app.test_cli_runner()
         db.create_all()
 
-        self.util = TestUtil(self.client)
-
     def tearDown(self):
         db.drop_all()
         self.context.pop()
 
     def test_1_get_user_list(self):
         """获取用户列表"""
-        self.util.create_user(username='admin', password='admin')
-        token = self.util.get_token(username='admin', password='admin')
+        create_user(username='admin', password='admin')
+        token = get_token(self.client, username='admin', password='admin')
         response = self.client.get(url_for('user_bp.user_api'), data=dict(
             token=token
         ))
@@ -37,8 +35,8 @@ class UserAPITestCase(unittest.TestCase):
 
     def test_2_get_user_detail(self):
         """获取用户详情"""
-        user = self.util.create_user(username='admin', password='admin')
-        token = self.util.get_token(username='admin', password='admin')
+        user = create_user(username='admin', password='admin')
+        token = get_token(self.client, username='admin', password='admin')
         response = self.client.get(url_for(
             'user_bp.user_id_api', user_id=user.id), data=dict(
             token=token
