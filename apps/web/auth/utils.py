@@ -6,8 +6,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature
 from itsdangerous import SignatureExpired
 
-from apps.web.exceptions import TokenErrorException, TokenTimeOutException
-from apps.web.exceptions import NotFoundException
+from apps.web.exceptions import APIException
 from apps.web.user.models import User
 
 
@@ -28,16 +27,16 @@ def generate_token(user, expiration=60 * 60 * 8):
 def validate_token(token):
     """验证token"""
     if not token:
-        return None
+        raise APIException('未认证！', 403)
     s = Serializer(current_app.config['SECRET_KEY'])
     try:
         data = s.loads(token)
     except BadSignature:
-        raise TokenErrorException
+        raise APIException('Token错误！', 403)
     except SignatureExpired:
-        raise TokenTimeOutException()
+        raise APIException('Token超时！', 403)
     user = User.query.get(data["user_id"])  # 使用令牌中的id来查询对应的用户对象
     if user is None:
-        raise NotFoundException(message='找不到用户！')
+        raise APIException('没有该用户！', 404)
     g.current_user = user  # 将用户对象存储到g上
     return user

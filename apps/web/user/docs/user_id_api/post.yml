@@ -17,8 +17,7 @@ parameters:
     require: true
     default: 1
   - in: body
-    name: User Information object
-    description:
+    name: User Information json
     schema:
       type: object
       properties:
@@ -39,21 +38,14 @@ parameters:
           require: false
           default: false
 
+produces:
+  - application/json
 responses:
   200:
     description: OK
-    produces:
-      - application/json
     schema:
-      type: object
-      properties:
-        code:
-          $ref: '#/definitions/code'
-        message:
-          $ref: '#/definitions/message'
-        request:
-          $ref: '#/definitions/request'
-        data:
-          type: object
-          require: true
-          $ref: '#/definitions/UserModel'
+      $ref: '#/definitions/UserModel'
+  400:
+    description: Client Error
+    schema:
+      $ref: '#/definitions/ErrorResponseJson'

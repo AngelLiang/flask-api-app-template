@@ -2,9 +2,8 @@
 
 from functools import wraps
 
-from flask import jsonify, request
+from flask import request
 
-from apps.web.utils import JsonResponse
 from apps.web.auth.utils import get_token, validate_token
 
 
@@ -15,8 +14,6 @@ def api_login_required(func):
         # 所以我们只在OPTIONS方法之外的请求中验证令牌。
         if request.method != 'OPTIONS':
             token = get_token()
-            ret = validate_token(token)
-            if not ret:
-                return jsonify(JsonResponse.fail(u"用户未登录！"))
+            validate_token(token)
             return func(*args, **kwargs)
     return decorated_function

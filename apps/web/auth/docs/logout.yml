@@ -1,4 +1,4 @@
-用户登出
+User Logout
 ---
 tags:
   - Auth
@@ -12,21 +12,9 @@ parameters:
 
 responses:
   200:
-    description: 用户成功登出
-    produces:
-      - application/json
+    description: OK
+  400:
+    description: Client Error
     schema:
-      $ref: '#/definitions/CommenResponse'
+      $ref: '#/definitions/ErrorResponseJson'
 
-definitions:
-  LogoutResponse:
-    properties:
-      code:
-        $ref: '#/definitions/code'
-      message:
-        $ref: '#/definitions/message'
-      request:
-        $ref: '#/definitions/request'
-      data:
-        type: object
-        example: {}

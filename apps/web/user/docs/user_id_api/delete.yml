@@ -17,17 +17,12 @@ parameters:
     require: true
     default: 1
 
+produces:
+  - application/json
 responses:
   200:
     description: OK
-    produces:
-      - application/json
+  400:
+    description: Client Error
     schema:
-      type: object
-      properties:
-        code:
-          $ref: '#/definitions/code'
-        message:
-          $ref: '#/definitions/message'
-        request:
-          $ref: '#/definitions/request'
+      $ref: '#/definitions/ErrorResponseJson'

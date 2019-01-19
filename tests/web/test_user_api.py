@@ -33,19 +33,14 @@ class UserAPITestCase(unittest.TestCase):
         response = self.client.get(url_for('user_bp.user_api'), data=dict(
             token=token
         ))
-        data = response.get_json()
-        # print(data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(data['code'], 20000)
 
     def test_2_get_user_detail(self):
         """获取用户详情"""
         user = self.util.create_user(username='admin', password='admin')
         token = self.util.get_token(username='admin', password='admin')
-        response = self.client.get(url_for('user_bp.user_id_api', id_=user.id), data=dict(
-            token=token,
+        response = self.client.get(url_for(
+            'user_bp.user_id_api', user_id=user.id), data=dict(
+            token=token
         ))
-        data = response.get_json()
-        # print(data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(data['code'], 20000)

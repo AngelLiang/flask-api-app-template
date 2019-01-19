@@ -1,4 +1,4 @@
-Get User Total Number
+User Active Setting
 ---
 tags:
   - User
@@ -9,6 +9,16 @@ parameters:
     type: string
     require: true
     description: token
+  - in: body
+    name: change user active
+    description:
+    schema:
+      type: object
+      properties:
+        active:
+          type: boolean
+          require: true
+          description: change user active
 
 responses:
   200:

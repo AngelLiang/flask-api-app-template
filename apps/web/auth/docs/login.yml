@@ -1,76 +1,51 @@
-用户登录
+User Login
 ---
 tags:
   - Auth
 
+consumes:
+  - application/json
+
 parameters:
-  - name: username
-    in: formData
-    type: string
-    require: true
-    description: username
-  - name: password
-    in: formData
-    type: string
-    require: true
-    description: password
+  - in: body
+    name: user login api
+    description: user login api
+    schema:
+      type: object
+      properties:
+        username:
+          type: string
+          require: true
+          example: admin
+          description: username
+        password:
+          type: string
+          require: true
+          example: admin
+          description: password
 
 responses:
   200:
     description: OK
-    produces:
-      - application/json
+  400:
+    description: Client Error
     schema:
-      $ref: '#/definitions/LoginResponse'
+      $ref: '#/definitions/ErrorResponseJson'
 
 definitions:
   code:
     type: integer
     require: true
-    example: 20000
-    description: 业务响应码。
-      20000表示成功；40000表示失败。
+    example: 400
+    description: 状态码
   message:
     type: string
     require: true
-    example: Success!
-    description: 业务响应说明
+    example: 状态说明！
 
-  request:
-    type: string
-    require: true
-    example: http://127.0.0.1:5000/api/v1/auth/login
-    description: 请求的完整url
-
-  response_data:
-    type: object
-    require: false
-    example: {}
-    description: 存放额外的业务数据
-
-  CommenResponse:
+  ErrorResponseJson:
     properties:
       code:
         $ref: '#/definitions/code'
       message:
         $ref: '#/definitions/message'
-      request:
-        $ref: '#/definitions/request'
-      data:
-        $ref: '#/definitions/response_data'
-
-  LoginResponse:
-    properties:
-      code:
-        $ref: '#/definitions/code'
-      message:
-        $ref: '#/definitions/message'
-      request:
-        $ref: '#/definitions/request'
-      data:
-        type: object
-        require: false
-        example: { token: xxx }
-        properties:
-          token:
-            type: string

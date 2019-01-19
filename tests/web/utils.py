@@ -37,4 +37,4 @@ class TestUtil(object):
         ))
         json_data = response.get_json()
         # print(json_data)
-        return json_data['data']['token']
+        return json_data['token']

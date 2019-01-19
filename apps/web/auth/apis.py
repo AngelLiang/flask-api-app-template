@@ -6,13 +6,12 @@ from flask import jsonify, request
 
 from flasgger.utils import swag_from
 
-
-from apps.web import exceptions
 from apps.web.extensions import CORS
-from apps.web.utils import JsonResponse
 
 from apps.web.user.models import User
 from apps.web.auth.utils import generate_token
+
+from apps.web.exceptions import APIException
 
 auth_bp = Blueprint("auth_bp", __name__)
 CORS(auth_bp)
@@ -21,30 +20,36 @@ CORS(auth_bp)
 @auth_bp.route("/auth/login", methods=["POST"])
 @swag_from('docs/login.yml')
 def login():
-    """
-    # file: docs/login.yml
-    """
     username = request.values.get("username")
     password = request.values.get("password")
+
     if username is None or password is None:
-        raise exceptions.ParameterMissException()
+        requset_json = request.get_json()
+        if requset_json:
+            username = requset_json.get("username")
+            password = requset_json.get("password")
+
+    if username is None or password is None:
+        raise APIException()
 
     user = User.query.filter_by(username=username).first()
     if user and user.validate_password(password):
         token = generate_token(user)
-        return jsonify(JsonResponse.success(data={"token": token}))
-    return jsonify(JsonResponse.fail())
+        return jsonify({"token": token})
+    else:
+        raise APIException('用户名和密码错误！')
 
 
 from .decorator import api_login_required
 
 
 @auth_bp.route("/auth/logout", methods=["POST"])
-@swag_from('docs/logout.yml')
 @api_login_required
+@swag_from('docs/logout.yml')
 def logout():
+    """前端登出，清除token即可
+
+    已知问题：jwt生成的token暂时无法在后端清除
     """
-    # file: docs/logout.yml
-    """
-    # TODO
-    return jsonify(JsonResponse.success())
+    # TODO:
+    return jsonify()

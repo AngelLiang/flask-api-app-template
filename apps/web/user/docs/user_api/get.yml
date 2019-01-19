@@ -10,29 +10,20 @@ parameters:
     require: true
     description: token
 
+produces:
+  - application/json
 responses:
   200:
     description: OK
-    produces:
-      - application/json
     schema:
-      $ref: '#/definitions/UserApiResponse'
+      $ref: '#/definitions/CommenListResponse'
+  400:
+    description: Client Error
+    schema:
+      $ref: '#/definitions/ErrorResponseJson'
 
 definitions:
-  UserApiResponse:
-    properties:
-      code:
-        $ref: '#/definitions/code'
-      message:
-        $ref: '#/definitions/message'
-      request:
-        $ref: '#/definitions/request'
-      data:
-        type: object
-        require: true
-        $ref: '#/definitions/CommenModelData'
-
-  CommenModelData:
+  CommenListResponse:
     properties:
       current_page:
         type: integer
