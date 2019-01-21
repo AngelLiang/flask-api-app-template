@@ -18,7 +18,8 @@ def get_token():
     token = request.headers.get("Authorization") or request.values.get("token")
     if not token:
         request_json = request.get_json()
-        token = request_json.get("token")
+        if request_json:
+            token = request_json.get("token")
     return token
 
 
