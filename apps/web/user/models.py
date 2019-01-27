@@ -23,7 +23,7 @@ DateTime = db.DateTime
 class User(Model):
     """用户"""
     __tablename__ = 'user'
-    user_id = Column(Integer, primary_key=True)
+    id = Column('user_id', Integer, primary_key=True)
     # ### 帐号基本字段 ###
     username = Column(String(20), unique=True, index=True)
     password_hash = Column(String(128), nullable=False)
@@ -56,14 +56,6 @@ class User(Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
-    @property
-    def id(self):
-        return self.user_id
-
-    @id.setter
-    def id(self, value):
-        self.user_id = value
-
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -82,11 +74,12 @@ class User(Model):
 
     def to_dict(self):
         d = dict(
-            id=self.user_id,
+            id=self.id,
             username=self.username,
 
             is_active=self.is_active,
-            create_datetime=dt.datetime.strftime(self.create_datetime, '%Y-%m-%d %H:%M:%S'),
+            create_datetime=dt.datetime.strftime(
+                self.create_datetime, '%Y-%m-%d %H:%M:%S'),
 
             fullname=self.fullname,
             email=self.email,

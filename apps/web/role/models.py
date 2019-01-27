@@ -30,19 +30,11 @@ class RolesUsers(Model):
 class Role(Model):
     """角色"""
     __tablename__ = 'role'
-    role_id = Column(Integer, primary_key=True)
+    id = Column('role_id', Integer, primary_key=True)
     name = Column(String(30), unique=True)
 
     # relationship
     users = relationship('User', secondary='roles_users', backref='roles')
-
-    @property
-    def id(self):
-        return self.role_id
-
-    @id.setter
-    def id(self, value):
-        self.role_id = value
 
     def to_dict(self):
         d = dict(id=self.id, name=self.name)

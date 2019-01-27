@@ -38,7 +38,7 @@ class PermissionsRoles(Model):
 class Permission(Model):
     """权限"""
     __tablename__ = 'permission'
-    permission_id = Column(Integer, primary_key=True)
+    id = Column('permission_id', Integer, primary_key=True)
     name = Column(String(30), unique=True)
 
     # relationship
@@ -46,14 +46,6 @@ class Permission(Model):
         'Role', secondary='permissions_roles', backref='permissions')
     users = relationship(
         'User', secondary='permissions_users', backref='permissions')
-
-    @property
-    def id(self):
-        return self.permission_id
-
-    @id.setter
-    def id(self, value):
-        self.permission_id = value
 
     def to_dict(self):
         d = dict(id=self.id, name=self.name)
