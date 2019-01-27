@@ -1,0 +1,51 @@
+Generate User Token, For User Login
+---
+tags:
+  - Token
+
+consumes:
+  - application/json
+
+parameters:
+  - in: body
+    name: user login api
+    schema:
+      type: object
+      properties:
+        username:
+          type: string
+          require: true
+          example: admin
+          description: username
+        password:
+          type: string
+          require: true
+          example: admin
+          description: password
+
+responses:
+  200:
+    description: OK
+  400:
+    description: Client Error
+    schema:
+      $ref: '#/definitions/ErrorResponseJson'
+
+definitions:
+  code:
+    type: integer
+    require: true
+    example: 400
+    description: 错误码
+  message:
+    type: string
+    require: true
+    example: 错误说明
+    description: 错误说明
+
+  ErrorResponseJson:
+    properties:
+      code:
+        $ref: '#/definitions/code'
+      message:
+        $ref: '#/definitions/message'

@@ -12,8 +12,14 @@ from apps.web.user.models import User
 
 def get_token():
     """获取token"""
-    # 首先从header获取token，如果没有则从参数中获取token
+    # 首先从header获取token，
+    # 如果没有则从values（query string or 表单）中获取token，
+    # 最后再从 json body 获取 token
     token = request.headers.get("Authorization") or request.values.get("token")
+    if not token:
+        request_json = request.get_json()
+        if request_json:
+            token = request_json.get("token")
     return token
 
 
