@@ -4,6 +4,7 @@ from sqlalchemy import func
 from flasgger.utils import swag_from
 
 from flask import request, jsonify
+from flask import g
 
 from apps.web.extensions import db
 
@@ -48,7 +49,7 @@ def user_change_password():
     if user.validate_password(old_password):
         user.set_password(new_password)
 
-    return jsonify()
+    return jsonify(), 204
 
 
 @user_bp.route("/user/active", methods=['POST'])
@@ -59,8 +60,8 @@ def user_is_active():
     格式：json
     参数：
         user_id: 用户id
-        active: bool, True - 启用
-                      False - 禁用
+        is_active: bool, True - 启用
+                         False - 禁用
     """
     request_json = request.get_json()
     if not request_json:
@@ -68,12 +69,14 @@ def user_is_active():
 
     try:
         user_id = request_json['user_id']
-        active = request_json['active']
+        is_active = request_json['is_active']
     except KeyError:
         raise APIException()
-    else:
-        user = get_user_by_id(user_id)
-        user.is_active = active
-        db.session.add(user)
-        db.session.commit()
-        return jsonify()
+    try:
+        user = User.query.get(int(user_id))
+    except ValueError:
+        raise APIException()
+    user.is_active = is_active
+    db.session.add(user)
+    db.session.commit()
+    return jsonify({'is_active': is_active})
