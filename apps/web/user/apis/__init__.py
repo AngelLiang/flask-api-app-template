@@ -7,4 +7,5 @@ user_bp = Blueprint("user_bp", __name__)
 CORS(user_bp)
 
 from . import apis
-from . import rest_apis
+from . import user_api
+from . import users_api

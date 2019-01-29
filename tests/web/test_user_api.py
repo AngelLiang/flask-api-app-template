@@ -28,7 +28,7 @@ class UserAPITestCase(unittest.TestCase):
         """获取用户列表"""
         create_user(username='admin', password='admin')
         token = get_token(self.client, username='admin', password='admin')
-        response = self.client.get(url_for('user_bp.user_api'), data=dict(
+        response = self.client.get(url_for('user_bp.users_api'), data=dict(
             token=token
         ))
         self.assertEqual(response.status_code, 200)
@@ -38,7 +38,7 @@ class UserAPITestCase(unittest.TestCase):
         user = create_user(username='admin', password='admin')
         token = get_token(self.client, username='admin', password='admin')
         response = self.client.get(url_for(
-            'user_bp.user_id_api', user_id=user.id), data=dict(
+            'user_bp.user_api', user_id=user.id), data=dict(
             token=token
         ))
         self.assertEqual(response.status_code, 200)

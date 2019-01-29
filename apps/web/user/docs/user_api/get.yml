@@ -1,7 +1,10 @@
-Get User Model List
+Get User Model by user_id
 ---
 tags:
   - User
+
+consumes:
+  - application/json
 
 parameters:
   - name: Authorization
@@ -9,6 +12,10 @@ parameters:
     type: string
     require: true
     description: token
+  - in: path
+    name: user_id
+    require: true
+    default: 1
 
 produces:
   - application/json
@@ -16,47 +23,40 @@ responses:
   200:
     description: OK
     schema:
-      $ref: '#/definitions/CommenListResponse'
+      $ref: '#/definitions/UserModel'
   400:
     description: Client Error
     schema:
       $ref: '#/definitions/ErrorResponseJson'
 
 definitions:
-  CommenListResponse:
+  UserModel:
     properties:
-      current_page:
+      id:
         type: integer
-        require: true
         example: 1
-      has_prev:
+      username:
+        type: string
+        example: admin
+
+      is_active:
         type: boolean
-        require: true
-        example: false
-      has_next:
+        example: true
+
+      fullname:
+        type: string
+      email:
+        type: string
+        example: admin@example.com
+      is_email_confirm:
         type: boolean
-        require: true
-        example: false
-      next_number:
-        type: integer
-        require: true
-        example: null
-      prev_number:
-        type: integer
-        require: true
-        example: null
-      total:
-        type: integer
-        require: false
-        example: 1
-      total_pages:
-        type: integer
-        require: true
-        example: 1
-      items:
-        type: object
-        example: []
-      items_size:
-        type: integer
-        require: true
-        example: 1
+        example: true
+      phone:
+        type: string
+      is_phone_confirm:
+        type: string
+        example: true
+
+      create_datetime:
+        type: string
+        example: yyyy-mm-dd hh:MM:ss

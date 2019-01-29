@@ -13,7 +13,7 @@ from apps.web.auth.decorator import api_login_required
 from apps.web.user.models import User
 
 
-from . import user_bp
+from apps.web.user.apis import user_bp
 
 
 @user_bp.route("/user/total", methods=["GET"])

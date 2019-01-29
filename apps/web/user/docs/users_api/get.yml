@@ -1,0 +1,62 @@
+Get User Model List
+---
+tags:
+  - User
+
+parameters:
+  - name: Authorization
+    in: header
+    type: string
+    require: true
+    description: token
+
+produces:
+  - application/json
+responses:
+  200:
+    description: OK
+    schema:
+      $ref: '#/definitions/CommenListResponse'
+  400:
+    description: Client Error
+    schema:
+      $ref: '#/definitions/ErrorResponseJson'
+
+definitions:
+  CommenListResponse:
+    properties:
+      current_page:
+        type: integer
+        require: true
+        example: 1
+      has_prev:
+        type: boolean
+        require: true
+        example: false
+      has_next:
+        type: boolean
+        require: true
+        example: false
+      next_number:
+        type: integer
+        require: true
+        example: null
+      prev_number:
+        type: integer
+        require: true
+        example: null
+      total:
+        type: integer
+        require: false
+        example: 1
+      total_pages:
+        type: integer
+        require: true
+        example: 1
+      items:
+        type: object
+        example: []
+      items_size:
+        type: integer
+        require: true
+        example: 1
