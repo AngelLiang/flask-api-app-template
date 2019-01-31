@@ -9,6 +9,16 @@ parameters:
     type: string
     require: true
     description: token
+  - name: page
+    in: query
+    type: integer
+    require: false
+    default: 1
+  - name: perPage
+    in: query
+    type: integer
+    require: false
+    default: 10
 
 produces:
   - application/json

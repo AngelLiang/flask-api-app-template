@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from apps.web.extensions import db
 from apps.web.utils import JsonType
 
+
 Model = db.Model
 ForeignKey = db.ForeignKey
 relationship = db.relationship
