@@ -15,8 +15,8 @@ from apps.web.utils import paginate2dict
 from apps.web.auth.decorator import api_login_required
 from apps.web.user.models import User
 
-
 from apps.web.user.apis import user_bp
+from apps.web.user.apis.utils import user_to_dict
 
 
 class UsersAPI(MethodView):
@@ -61,7 +61,7 @@ class UsersAPI(MethodView):
         db.session.add(user)
         db.session.commit()
 
-        data = user.to_dict()
+        data = user_to_dict(user)
         return jsonify(data)
 
 

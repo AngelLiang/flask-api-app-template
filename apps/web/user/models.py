@@ -1,13 +1,12 @@
 # coding=utf-8
 
 # import os
-import json
 import datetime as dt
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from apps.web.extensions import db
-
+from apps.web.utils import JsonType
 
 Model = db.Model
 ForeignKey = db.ForeignKey
@@ -51,7 +50,9 @@ class User(Model):
     is_phone_confirm = Column(Boolean, nullable=False, default=False)
 
     # 存储json格式的额外信息
-    additional_info = Column(db.Text(), nullable=False, default='')
+    # additional_info = Column(db.Text(), nullable=False, default='{}')
+    # additional_info = Column(JSON, nullable=False, default={})
+    additional_info = Column(JsonType)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -62,15 +63,15 @@ class User(Model):
     def validate_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def set_additional_info(self, value: str):
-        """验证传入的json value并写入数据库additional_info的字段"""
-        v = json.loads(value)
-        self.additional_info = v
+    # def set_additional_info(self, value: dict):
+    #     """验证传入的json value并写入数据库additional_info的字段"""
+    #     v = json.dumps(value)
+    #     self.additional_info = v
 
-    def get_additional_info(self) -> dict:
-        """从数据库加载additional_info字段，返回dict"""
-        v = json.dumps(self.additional_info)
-        return v
+    # def get_additional_info(self) -> dict:
+    #     """从数据库加载additional_info字段，返回dict"""
+    #     v = json.loads(self.additional_info)
+    #     return v
 
     def to_dict(self):
         d = dict(

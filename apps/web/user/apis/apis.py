@@ -52,29 +52,30 @@ def user_change_password():
     return jsonify(), 204
 
 
-@user_bp.route("/user/active", methods=['POST'])
+@user_bp.route("/user/<user_id>/is_active", methods=['POST'])
 @api_login_required
 @swag_from('../docs/user_is_active.yml')
-def user_is_active():
+def user_is_active(user_id):
     """帐号的启用与禁用，管理员可用
-    格式：json
-    参数：
+
+    requset path：
         user_id: 用户id
+    request body:
         is_active: bool, True - 启用
                          False - 禁用
     """
-    request_json = request.get_json()
-    if not request_json:
-        raise APIException()
 
-    try:
-        user_id = request_json['user_id']
-        is_active = request_json['is_active']
-    except KeyError:
-        raise APIException()
     try:
         user = User.query.get(int(user_id))
     except ValueError:
+        raise APIException()
+
+    request_json = request.get_json()
+    if not request_json:
+        raise APIException()
+    try:
+        is_active = request_json['is_active']
+    except KeyError:
         raise APIException()
     user.is_active = is_active
     db.session.add(user)

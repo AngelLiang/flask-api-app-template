@@ -14,8 +14,8 @@ from apps.web.exceptions import APIException
 from apps.web.auth.decorator import api_login_required
 from apps.web.user.models import User
 
-
 from apps.web.user.apis import user_bp
+from apps.web.user.apis.utils import user_to_dict
 
 
 class UserAPI(MethodView):
@@ -36,7 +36,7 @@ class UserAPI(MethodView):
         GET /api/v1/user/<user_id>
         """
         user = self.get_models(user_id)
-        data = user.to_dict()
+        data = user_to_dict(user)
         return jsonify(data)
 
     @swag_from('../docs/user_api/post.yml')
@@ -60,7 +60,7 @@ class UserAPI(MethodView):
 
         db.session.add(user)
         db.session.commit()
-        data = user.to_dict()
+        data = user_to_dict(user)
         return jsonify(data)
 
     @swag_from('../docs/user_api/delete.yml')

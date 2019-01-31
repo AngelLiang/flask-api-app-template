@@ -9,6 +9,7 @@ flask-sqlalchemy = "*"
 flask-cors = "*"
 python-dotenv = "*"
 flasgger = "*"
+mysql-connector = "*"
 
 [dev-packages]
 rope = "*"
