@@ -9,3 +9,4 @@ CORS(user_bp)
 from . import apis
 from . import user_api
 from . import users_api
+from . import users_search_api

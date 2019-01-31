@@ -1,4 +1,7 @@
 # coding=utf-8
+"""
+单一用户接口
+"""
 
 # from sqlalchemy import func
 from flasgger.utils import swag_from

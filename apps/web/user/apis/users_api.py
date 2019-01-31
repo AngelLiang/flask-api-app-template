@@ -1,4 +1,7 @@
 # coding=utf-8
+"""
+用户集合接口
+"""
 
 from sqlalchemy import func
 from flasgger.utils import swag_from
@@ -17,30 +20,8 @@ from apps.web.auth.decorator import api_login_required
 from apps.web.user.models import User
 
 from apps.web.user.apis import user_bp
-from apps.web.user.apis.utils import user_to_dict
-
-
-def gen_pagination(page, per_page, total):
-    pagination = dict(
-        page=page,
-        perPage=per_page,
-        total=total
-    )
-    return pagination
-
-
-def gen_links(paginate, per_page):
-    links = {
-        'prev_page': '',
-        'next_page': '',
-    }
-    if paginate.has_prev:
-        links['prev_page'] = url_for(
-            request.basu_url, page=paginate.prev_num, perPage=per_page, _external=True)
-    if paginate.has_next:
-        links['next_page'] = url_for(
-            request.basu_url, page=paginate.next_num, perPage=per_page, _external=True)
-    return links
+from apps.web.user.apis.utils import user_to_dict, gen_links, gen_pagination
+from apps.web.user.apis.utils import sort_list
 
 
 class UsersAPI(MethodView):
@@ -55,18 +36,26 @@ class UsersAPI(MethodView):
         page = request.args.get('page', default=1, type=int)
         per_page = request.args.get('perPage', default=10, type=int)
 
-        paginate = User.query.paginate(page, per_page)
+        user_query = User.query
+
+        # 排序
+        sort = request.values.get('sort')   # 排序的column
+        if sort == 'id':
+            sort = 'user_id'
+        order = request.values.get('order')  # 排序顺序：`asc` or `desc`
+        user_query = sort_list(User, user_query, sort, order)
+
+        paginate = user_query.paginate(page, per_page)
 
         total = db.session.query(func.count('*')).select_from(User).scalar()
 
         items = [user_to_dict(item) for item in paginate.items]
         # data = paginate2dict(paginate, items, total)
-        data = items
-        current_app.logger.debug(data)
+        # current_app.logger.debug(items)
         return jsonify({
             'pagination': gen_pagination(paginate.page, per_page, total),
             'links': gen_links(paginate, per_page),
-            'data': data,
+            'data': items,
             'self': request.url
         })
 

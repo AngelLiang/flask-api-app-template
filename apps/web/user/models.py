@@ -99,4 +99,12 @@ class User(Model):
         admin.username = 'admin'
         admin.set_password('admin')
         db.session.add(admin)
+
+        admin01 = User.query.filter_by(username='admin01').first()
+        if not admin01:
+            admin01 = User()
+        admin01.username = 'admin01'
+        admin01.set_password('admin')
+        db.session.add(admin01)
+
         return commit and db.session.commit()

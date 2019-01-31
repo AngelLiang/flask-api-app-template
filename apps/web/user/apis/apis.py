@@ -17,15 +17,6 @@ from apps.web.user.models import User
 from apps.web.user.apis import user_bp
 
 
-@user_bp.route("/user/total", methods=["GET"])
-@api_login_required
-@swag_from('../docs/user_total.yml')
-def user_total():
-    total = db.session.query(func.count('*')).select_from(User).scalar()
-    data = {'total': total}
-    return jsonify(data)
-
-
 @user_bp.route("/user/change-password", methods=['POST'])
 @api_login_required
 @swag_from('../docs/user_change_password.yml')
@@ -80,4 +71,4 @@ def user_is_active(user_id):
     user.is_active = is_active
     db.session.add(user)
     db.session.commit()
-    return jsonify({'is_active': is_active})
+    return jsonify(dict(data={'is_active': is_active}))

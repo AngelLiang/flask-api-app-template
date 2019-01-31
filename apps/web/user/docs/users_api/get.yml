@@ -19,6 +19,14 @@ parameters:
     type: integer
     require: false
     default: 10
+  - name: sort
+    in: query
+    type: string
+    require: false
+  - name: order
+    in: query
+    type: string
+    require: false
 
 produces:
   - application/json

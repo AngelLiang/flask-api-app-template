@@ -1,0 +1,32 @@
+Search Users
+---
+tags:
+  - User
+
+parameters:
+  - name: Authorization
+    in: header
+    type: string
+    require: true
+    description: token
+  - name: q
+    in: query
+    type: string
+    require: true
+    description: search text
+  - name: sort
+    in: query
+    type: string
+    require: false
+  - name: order
+    in: query
+    type: string
+    require: false
+
+responses:
+  200:
+    description: OK
+  400:
+    description: Client Error
+    schema:
+      $ref: '#/definitions/ErrorResponseJson'
