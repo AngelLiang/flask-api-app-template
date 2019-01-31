@@ -3,7 +3,7 @@
 from sqlalchemy import func
 from flasgger.utils import swag_from
 
-from flask import current_app
+from flask import current_app, url_for
 from flask import request, jsonify
 from flask.views import MethodView
 
@@ -38,7 +38,9 @@ class UsersAPI(MethodView):
         data = paginate2dict(paginate)
         data['total'] = total
         current_app.logger.debug(data)
-        return jsonify(data)
+        return jsonify({
+            'data': data,
+        })
 
     @swag_from('../docs/users_api/post.yml')
     def post(self):
@@ -62,7 +64,9 @@ class UsersAPI(MethodView):
         db.session.commit()
 
         data = user_to_dict(user)
-        return jsonify(data)
+        return jsonify({
+            'data': data
+        })
 
 
 user_bp.add_url_rule('/users', view_func=UsersAPI.as_view('users_api'))

@@ -37,7 +37,9 @@ class UserAPI(MethodView):
         """
         user = self.get_models(user_id)
         data = user_to_dict(user)
-        return jsonify(data)
+        return jsonify({
+            'data': data,
+        })
 
     @swag_from('../docs/user_api/post.yml')
     def post(self, user_id):
@@ -61,7 +63,9 @@ class UserAPI(MethodView):
         db.session.add(user)
         db.session.commit()
         data = user_to_dict(user)
-        return jsonify(data)
+        return jsonify({
+            'data': data,
+        })
 
     @swag_from('../docs/user_api/delete.yml')
     def delete(self, user_id):

@@ -19,7 +19,7 @@ def user_to_dict(user: User):
         additional_info=user.additional_info,
     )
     links = {
-        'change_user_active': url_for('user_bp.user_is_active', user_id=user.id, _external=True)
+        'changeUserIsActive': url_for('user_bp.user_is_active', user_id=user.id, _external=True)
     }
     d['links'] = links
     return d
