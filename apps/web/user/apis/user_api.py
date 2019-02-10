@@ -21,6 +21,12 @@ from apps.web.user.apis import user_bp
 from apps.web.user.apis.utils import user_to_dict
 
 
+def get_request_parameter_dict():
+    if not request.is_json:
+        raise APIException()
+    return request.get_json()
+
+
 class UserAPI(MethodView):
     decorators = [api_login_required]
 
@@ -52,17 +58,13 @@ class UserAPI(MethodView):
         """
         user = self.get_models(user_id)
 
-        request_json = request.get_json()
-        if not request_json:
-            raise APIException()
-
-        username = request_json.get('username')
-        password = request_json.get('password')
-
-        if username:
-            user.username = username
-        if password:
-            user.set_password(password)
+        request_dict = get_request_parameter_dict()
+        if 'username' in request_dict:
+            user.username = request_dict['username']
+        if 'password' in request_dict:
+            password = request_dict['password']
+            if password:
+                user.set_password(password)
 
         db.session.add(user)
         db.session.commit()
@@ -80,7 +82,7 @@ class UserAPI(MethodView):
         user = self.get_models(user_id)
         db.session.delete(user)
         db.session.commit()
-        return jsonify()
+        return jsonify(), 204
 
 
 user_bp.add_url_rule(
