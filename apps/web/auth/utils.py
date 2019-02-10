@@ -17,12 +17,12 @@ def get_token():
     # 最后再从 json body 获取 token
     try:
         # Authorization: token <TOKEN>
+        token = None
         Authorization = request.headers.get("Authorization")
-        token_type, token = Authorization.split(None, 1)
-        if token_type and token_type.upper() == 'TOKEN':
-            return token
-        else:
-            token = None
+        if Authorization:
+            token_type, token = Authorization.spilt(None, 1)
+            if token_type and token_type.upper() == 'TOKEN':
+                return token
     except ValueError:  # Authorization字段为空或token为空
         token = None
     if not token:
