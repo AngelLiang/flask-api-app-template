@@ -3,3 +3,4 @@
 
 from .paginate import paginate2dict
 from .models import JsonType
+from .request import get_request_parameter

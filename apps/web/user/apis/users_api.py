@@ -15,7 +15,7 @@ from apps.web.extensions import db
 
 from apps.web.exceptions import APIException
 
-from apps.web.utils import paginate2dict
+from apps.web.utils import paginate2dict, get_request_parameter
 from apps.web.auth.decorator import api_login_required
 from apps.web.user.models import User
 
@@ -64,14 +64,16 @@ class UsersAPI(MethodView):
         """
         POST /api/v1/user
         """
-        request_json = request.get_json()
-        if not request_json:
+        request_dict = get_request_parameter()
+
+        if 'username' not in request_dict or 'password' not in request_dict:
+            raise APIException('参数错误！')
+        username = request_dict['username']
+        password = request_dict['password']
+
+        if not username:
             raise APIException()
-
-        username = request_json.get('username')
-        password = request_json.get('password')
-
-        if username is None or password is None:
+        if not password:
             raise APIException()
 
         user = User()
@@ -84,7 +86,7 @@ class UsersAPI(MethodView):
         return jsonify({
             'data': data,
             'self': request.url
-        })
+        }), 201
 
 
 user_bp.add_url_rule('/users', view_func=UsersAPI.as_view('users_api'))
