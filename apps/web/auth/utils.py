@@ -20,7 +20,7 @@ def get_token():
         token = None
         Authorization = request.headers.get("Authorization")
         if Authorization:
-            token_type, token = Authorization.spilt(None, 1)
+            token_type, token = Authorization.split(None, 1)
             if token_type and token_type.upper() == 'TOKEN':
                 return token
     except ValueError:  # Authorization字段为空或token为空
