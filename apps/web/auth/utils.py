@@ -45,15 +45,16 @@ def validate_token(token):
     """验证token"""
     if not token:
         raise APIException('未认证！', 403)
-    s = Serializer(current_app.config['SECRET_KEY'])
     try:
+        s = Serializer(current_app.config['SECRET_KEY'])
         data = s.loads(token)
     except BadSignature:
         raise APIException('Token错误！', 403)
     except SignatureExpired:
         raise APIException('Token超时！', 403)
-    user = User.query.get(data["user_id"])  # 使用令牌中的id来查询对应的用户对象
-    if user is None:
-        raise APIException('没有该用户！', 404)
-    g.current_user = user  # 将用户对象存储到g上
-    return user
+    else:
+        user = User.query.get(data["user_id"])  # 使用令牌中的id来查询对应的用户对象
+        if user is None:
+            raise APIException('没有该用户！', 404)
+        g.current_user = user  # 将用户对象存储到g上
+        return user
