@@ -13,18 +13,13 @@ from flask.views import MethodView
 from apps.web.extensions import db
 
 from apps.web.exceptions import APIException
+from apps.web.utils import RequestDict
 
 from apps.web.auth.decorator import api_login_required
 from apps.web.user.models import User
 
 from apps.web.user.apis import user_bp
 from apps.web.user.apis.utils import user_to_dict
-
-
-def get_request_parameter_dict():
-    if not request.is_json:
-        raise APIException()
-    return request.get_json()
 
 
 class UserAPI(MethodView):
@@ -56,15 +51,13 @@ class UserAPI(MethodView):
         """
         POST /api/v1/user/<user_id>
         """
-        user = self.get_models(user_id)
 
-        request_dict = get_request_parameter_dict()
-        if 'username' in request_dict:
-            user.username = request_dict['username']
-        if 'password' in request_dict:
-            password = request_dict['password']
-            if password:
-                user.set_password(password)
+        request_dict = RequestDict()
+        request_dict.check('username', 'password')
+
+        user = self.get_models(user_id)
+        user.username = request_dict['username']
+        user.set_password(request_dict['password'])
 
         db.session.add(user)
         db.session.commit()
