@@ -15,7 +15,7 @@ from apps.web.extensions import db
 
 from apps.web.exceptions import APIException
 
-from apps.web.utils import paginate2dict, get_request_parameter
+from apps.web.utils import paginate2dict, RequestDict
 from apps.web.auth.decorator import api_login_required
 from apps.web.user.models import User
 
@@ -64,21 +64,12 @@ class UsersAPI(MethodView):
         """
         POST /api/v1/user
         """
-        request_dict = get_request_parameter()
-
-        if 'username' not in request_dict or 'password' not in request_dict:
-            raise APIException('参数错误！')
-        username = request_dict['username']
-        password = request_dict['password']
-
-        if not username:
-            raise APIException()
-        if not password:
-            raise APIException()
+        request_dict = RequestDict()
+        request_dict.check('username', 'password')  # 检查参数
 
         user = User()
-        user.username = username
-        user.set_password(password)
+        user.username = request_dict['username']
+        user.set_password(request_dict['password'])
         db.session.add(user)
         db.session.commit()
 

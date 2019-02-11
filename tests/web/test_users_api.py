@@ -11,7 +11,7 @@ from apps.web.extensions import db
 from tests.web.utils import create_admin, create_user, get_token, gen_auth_headers
 
 
-class UserAPITestCase(unittest.TestCase):
+class UsersAPITestCase(unittest.TestCase):
     def setUp(self):
         app = create_app('testing')
         self.context = app.test_request_context()
@@ -24,13 +24,24 @@ class UserAPITestCase(unittest.TestCase):
         db.drop_all()
         self.context.pop()
 
-    def test_1_get_user_detail(self):
-        """获取用户详情"""
-        user = create_user(username='admin', password='admin')
+    def test_1_get_users_list(self):
+        """获取用户列表"""
+        create_user(username='admin', password='admin')
         token = get_token(self.client, username='admin', password='admin')
         response = self.client.get(url_for(
-            'user_bp.user_api', user_id=user.id),
+            'user_bp.users_api'),
             headers=gen_auth_headers(token)
         )
-        # print(response.json)
         self.assertEqual(response.status_code, 200)
+
+    def test_2_create_user(self):
+        """创建用户"""
+        create_user(username='admin', password='admin')
+        token = get_token(self.client, username='admin', password='admin')
+        response = self.client.post(url_for(
+            'user_bp.users_api'),
+            headers=gen_auth_headers(token),
+            json=dict(username='user', password='user')
+        )
+        # print(response.json)
+        self.assertEqual(response.status_code, 201)

@@ -8,7 +8,7 @@ from apps.web import create_app
 from apps.web.extensions import db
 # from apps.web.user.models import User
 
-from tests.web.utils import create_user, get_token
+from tests.web.utils import create_user, get_token, gen_auth_headers
 
 
 class UserTokenAPITestCase(unittest.TestCase):
@@ -42,4 +42,33 @@ class UserTokenAPITestCase(unittest.TestCase):
         response = self.client.delete(url_for('user_token_bp.user_token_api'), data=dict(
             token=token
         ))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 204)
+
+    def test_3_auth_token_in_header(self):
+        """测试放在json里的token"""
+        create_user(username='admin', password='admin')
+        token = get_token(self.client, username='admin', password='admin')
+        response = self.client.delete(url_for(
+            'user_token_bp.user_token_api'),
+            headers=gen_auth_headers(token)
+        )
+        self.assertEqual(response.status_code, 204)
+
+    def test_4_auth_token_in_query_string(self):
+        """测试放在quert string里的token"""
+        create_user(username='admin', password='admin')
+        token = get_token(self.client, username='admin', password='admin')
+        response = self.client.delete(url_for(
+            'user_token_bp.user_token_api', token=token),
+        )
+        self.assertEqual(response.status_code, 204)
+
+    def test_5_auth_token_in_json(self):
+        """测试放在json里的token"""
+        create_user(username='admin', password='admin')
+        token = get_token(self.client, username='admin', password='admin')
+        response = self.client.delete(url_for(
+            'user_token_bp.user_token_api'),
+            json=dict(token=token)
+        )
+        self.assertEqual(response.status_code, 204)

@@ -45,7 +45,7 @@ def register_extensions(app):
 
 def register_apis(app):
     from apps.web.auth.apis import auth_bp
-    from apps.web.user_token.apis import user_token_bp
+    from apps.web.user_token.user_token_api import user_token_bp
     from apps.web.user.apis import user_bp
     app.register_blueprint(auth_bp, url_prefix='/api/v1')
     app.register_blueprint(user_token_bp, url_prefix='/api/v1')

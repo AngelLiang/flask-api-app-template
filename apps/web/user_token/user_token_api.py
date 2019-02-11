@@ -9,6 +9,7 @@ from flasgger.utils import swag_from
 
 from apps.web.extensions import CORS
 from apps.web.exceptions import APIException
+from apps.web.utils import RequestDict
 from apps.web.auth.utils import generate_token
 from apps.web.auth.decorator import api_login_required
 
@@ -28,17 +29,10 @@ class UserTokenAPI(MethodView):
         """
         POST /api/v1/user/token
         """
-        username = request.values.get("username")
-        password = request.values.get("password")
-
-        if username is None or password is None:
-            requset_json = request.get_json()
-            if requset_json:
-                username = requset_json.get("username")
-                password = requset_json.get("password")
-
-        if username is None or password is None:
-            raise APIException()
+        request_dict = RequestDict()
+        request_dict.check('username', 'password')
+        username = request_dict['username']
+        password = request_dict['password']
 
         user = User.query.filter_by(username=username).first()
         if user and user.validate_password(password):
@@ -53,7 +47,8 @@ class UserTokenAPI(MethodView):
         """
         DELETE /api/v1/user/token
         """
-        return jsonify()
+        return jsonify(), 204
 
 
-user_token_bp.add_url_rule('/user/token', view_func=UserTokenAPI.as_view('user_token_api'))
+user_token_bp.add_url_rule(
+    '/user/token', view_func=UserTokenAPI.as_view('user_token_api'))
