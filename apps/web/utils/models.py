@@ -46,7 +46,10 @@ class JSONEncodedDict(TypeDecorator):
 
 
 # Usage:
+#
+#   ```
 #   class Model(Base):
 #       ...
 #       additional_json = Column(JsonType)
+#   ```
 JsonType = MutableDict.as_mutable(JSONEncodedDict)
