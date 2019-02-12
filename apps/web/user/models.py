@@ -74,6 +74,26 @@ class User(Model):
     #     v = json.loads(self.additional_info)
     #     return v
 
+    #################################################################
+    # Role
+    #################################################################
+
+    def add_role(self, rolename, commit=True):
+        """add role to user
+
+        :param rolename: 角色名称
+        """
+        from apps.web.role.models import Role
+        role = Role.query.filter_by(name=rolename).first()
+        if role:
+            self.roles.append(role)
+            db.session.add(self)
+            return commit and db.session.commit()
+
+    def is_administrator(self):
+        from apps.web.role.literals import ADMINISTRATOR
+        return ADMINISTRATOR in [role.name for role in self.roles]
+
     def to_dict(self):
         d = dict(
             id=self.id,

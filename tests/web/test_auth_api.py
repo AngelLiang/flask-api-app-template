@@ -30,7 +30,7 @@ class AuthAPITestCase(unittest.TestCase):
         response = user_login(self.client, username='admin', password='admin')
         data = response.get_json()
         self.assertEqual(response.status_code, 200)
-        self.assertIsNotNone(data['token'])
+        self.assertIsNotNone(data['data']['token'])
 
     def test_2_user_logout(self):
         """用户登出"""
@@ -39,4 +39,4 @@ class AuthAPITestCase(unittest.TestCase):
         response = self.client.post(url_for('auth_bp.logout'), data=dict(
             token=token
         ))
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 204)

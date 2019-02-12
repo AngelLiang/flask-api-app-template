@@ -9,7 +9,7 @@ from flasgger.utils import swag_from
 
 from apps.web.extensions import CORS
 from apps.web.exceptions import APIException
-from apps.web.utils import RequestDict
+from apps.web.utils import RequestDict, ResponseJson
 from apps.web.auth.utils import generate_token
 from apps.web.auth.decorator import api_login_required
 
@@ -27,7 +27,7 @@ class UserTokenAPI(MethodView):
     @swag_from('docs/post.yml')
     def post(self):
         """
-        POST /api/v1/user/token
+        POST /api/v1/users/token
         """
         request_dict = RequestDict()
         request_dict.check('username', 'password')
@@ -36,19 +36,17 @@ class UserTokenAPI(MethodView):
 
         user = User.query.filter_by(username=username).first()
         if user and user.validate_password(password):
-            token = generate_token(user)
-            return jsonify({"token": token})
-        else:
-            raise APIException('用户名和密码错误！')
+            return ResponseJson({'token': generate_token(user)})
+        raise APIException('用户名和密码错误！')
 
     @api_login_required
     @swag_from('docs/delete.yml')
     def delete(self):
         """
-        DELETE /api/v1/user/token
+        DELETE /api/v1/users/token
         """
-        return jsonify(), 204
+        return '', 204
 
 
 user_token_bp.add_url_rule(
-    '/user/token', view_func=UserTokenAPI.as_view('user_token_api'))
+    '/users/token', view_func=UserTokenAPI.as_view('user_token_api'))

@@ -41,7 +41,7 @@ def get_token(client, username='admin', password='admin'):
     ))
     json_data = response.get_json()
     # print(json_data)
-    return json_data['token']
+    return json_data['data']['token']
 
 
 def gen_auth_headers(token, auth_type='token'):

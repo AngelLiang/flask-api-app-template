@@ -27,19 +27,19 @@ class UserTokenAPITestCase(unittest.TestCase):
     def test_1_get_user_token(self):
         """获取用户token"""
         create_user(username='admin', password='admin')
-        response = self.client.post(url_for('user_token_bp.user_token_api'), data=dict(
+        response = self.client.post(url_for('user_token_bp.user_token_api'), json=dict(
             username='admin',
             password='admin'
         ))
         data = response.get_json()
         self.assertEqual(response.status_code, 200)
-        self.assertIsNotNone(data['token'])
+        self.assertIsNotNone(data['data']['token'])
 
     def test_2_delete_user_token(self):
         """清除用户token"""
         create_user(username='admin', password='admin')
         token = get_token(self.client, username='admin', password='admin')
-        response = self.client.delete(url_for('user_token_bp.user_token_api'), data=dict(
+        response = self.client.delete(url_for('user_token_bp.user_token_api'), json=dict(
             token=token
         ))
         self.assertEqual(response.status_code, 204)
@@ -55,7 +55,7 @@ class UserTokenAPITestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 204)
 
     def test_4_auth_token_in_query_string(self):
-        """测试放在quert string里的token"""
+        """测试放在query string里的token"""
         create_user(username='admin', password='admin')
         token = get_token(self.client, username='admin', password='admin')
         response = self.client.delete(url_for(

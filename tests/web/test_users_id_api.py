@@ -29,7 +29,7 @@ class UserAPITestCase(unittest.TestCase):
         user = create_user(username='admin', password='admin')
         token = get_token(self.client, username='admin', password='admin')
         response = self.client.get(url_for(
-            'user_bp.user_api', user_id=user.id),
+            'user_bp.users_id_api', user_id=user.id),
             headers=gen_auth_headers(token)
         )
         # print(response.json)

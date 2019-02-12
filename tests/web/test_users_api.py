@@ -24,19 +24,20 @@ class UsersAPITestCase(unittest.TestCase):
         db.drop_all()
         self.context.pop()
 
-    def test_1_get_users_list(self):
+    def test_1_get_user_list(self):
         """获取用户列表"""
-        create_user(username='admin', password='admin')
+        create_admin(username='admin', password='admin')
         token = get_token(self.client, username='admin', password='admin')
         response = self.client.get(url_for(
             'user_bp.users_api'),
             headers=gen_auth_headers(token)
         )
+        # print(response.json)
         self.assertEqual(response.status_code, 200)
 
     def test_2_create_user(self):
         """创建用户"""
-        create_user(username='admin', password='admin')
+        create_admin(username='admin', password='admin')
         token = get_token(self.client, username='admin', password='admin')
         response = self.client.post(url_for(
             'user_bp.users_api'),

@@ -78,8 +78,16 @@ def register_commands(app):
 
         click.echo('Initializing Permission...')
         Permission.init_data()
+
         click.echo('Initializing Role...')
         Role.init_data()
 
         click.echo('Initializing User...')
         User.init_data()
+
+        from apps.web.role.literals import ADMINISTRATOR
+        admin = User.query.filter_by(username='admin').first()
+        if admin:
+            admin.add_role(ADMINISTRATOR)
+            db.session.add(admin)
+            db.session.commit()

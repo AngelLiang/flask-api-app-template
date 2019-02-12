@@ -7,19 +7,18 @@
 from flasgger.utils import swag_from
 
 # from flask import current_app
-from flask import request, jsonify
 from flask.views import MethodView
 
 from apps.web.extensions import db
 
 from apps.web.exceptions import APIException
-from apps.web.utils import RequestDict
+from apps.web.utils import RequestDict, ResponseJson
 
 from apps.web.auth.decorator import api_login_required
 from apps.web.user.models import User
+from apps.web.user.utils import user_to_dict
 
 from apps.web.user.apis import user_bp
-from apps.web.user.apis.utils import user_to_dict
 
 
 class UserAPI(MethodView):
@@ -37,19 +36,16 @@ class UserAPI(MethodView):
     @swag_from('../docs/user_api/get.yml')
     def get(self, user_id):
         """
-        GET /api/v1/user/<user_id>
+        GET /api/v1/users/<user_id>
         """
         user = self.get_models(user_id)
         data = user_to_dict(user)
-        return jsonify({
-            'data': data,
-            'self': request.url
-        })
+        return ResponseJson(data=data)
 
     @swag_from('../docs/user_api/post.yml')
     def post(self, user_id):
         """
-        POST /api/v1/user/<user_id>
+        POST /api/v1/users/<user_id>
         """
 
         request_dict = RequestDict()
@@ -62,21 +58,18 @@ class UserAPI(MethodView):
         db.session.add(user)
         db.session.commit()
         data = user_to_dict(user)
-        return jsonify({
-            'data': data,
-            'self': request.url
-        }), 201
+        return ResponseJson(data=data), 201
 
     @swag_from('../docs/user_api/delete.yml')
     def delete(self, user_id):
         """
-        DELETE /api/v1/user/<user_id>
+        DELETE /api/v1/users/<user_id>
         """
         user = self.get_models(user_id)
         db.session.delete(user)
         db.session.commit()
-        return jsonify(), 204
+        return '', 204
 
 
 user_bp.add_url_rule(
-    '/users/<user_id>', view_func=UserAPI.as_view('user_api'))
+    '/users/<user_id>', view_func=UserAPI.as_view('users_id_api'))

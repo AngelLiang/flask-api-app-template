@@ -4,8 +4,9 @@
 import unittest
 from tests.web.test_auth_api import AuthAPITestCase
 from tests.web.test_user_token_api import UserTokenAPITestCase
-from tests.web.test_user_api import UserAPITestCase
 from tests.web.test_users_api import UsersAPITestCase
+from tests.web.test_users_id_api import UserAPITestCase
+
 
 # from apps.web import create_app
 # app = create_app('testing')

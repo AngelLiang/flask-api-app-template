@@ -34,10 +34,8 @@ def login():
 
     user = User.query.filter_by(username=username).first()
     if user and user.validate_password(password):
-        token = generate_token(user)
-        return jsonify({"token": token})
-    else:
-        raise APIException('用户名和密码错误！')
+        return jsonify({'data': {"token": generate_token(user)}})
+    raise APIException('用户名和密码错误！')
 
 
 from .decorator import api_login_required
@@ -52,4 +50,4 @@ def logout():
     已知问题：jwt生成的token暂时无法在后端清除
     """
     # TODO:
-    return jsonify()
+    return '', 204

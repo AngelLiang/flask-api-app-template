@@ -10,43 +10,46 @@ def user_to_dict(user: User):
     d = dict(
         id=user.id,
         username=user.username,
-        is_active=user.is_active,
+        isActive=user.is_active,
         state=user.state,
-        create_datetime=dt.datetime.strftime(
+        createDatetime=dt.datetime.strftime(
             user.create_datetime, '%Y-%m-%d %H:%M:%S'),
         fullname=user.fullname,
         email=user.email,
-        is_email_confirm=user.is_email_confirm,
+        isEmailConfirm=user.is_email_confirm,
         phone=user.phone,
-        is_phone_confirm=user.is_phone_confirm,
-        additional_info=user.additional_info,
+        isPhoneConfirm=user.is_phone_confirm,
+        additionalInfo=user.additional_info,
     )
-    links = {
-        'changeUserIsActive': url_for('user_bp.user_is_active', user_id=user.id, _external=True)
-    }
+    links = dict()
+    if not user.is_administrator():
+        links['changeUserActive'] = url_for(
+            'user_bp.user_is_active', user_id=user.id, _external=True)
     d['links'] = links
     return d
 
 
-def gen_pagination(page, per_page, total):
+def gen_pagination(page, per_page, total=None):
     pagination = dict(
         page=page,
         perPage=per_page,
-        total=total
     )
+    if total:
+        pagination['total'] = total
     return pagination
 
 
 def gen_links(paginate, per_page):
-    links = {
-        'prev_page': '',
-        'next_page': '',
-    }
+    """
+    :param paginate:
+    :param per_page:
+    """
+    links = {}
     if paginate.has_prev:
-        links['prev_page'] = url_for(
+        links['prev_page_url'] = url_for(
             request.basu_url, page=paginate.prev_num, perPage=per_page, _external=True)
     if paginate.has_next:
-        links['next_page'] = url_for(
+        links['next_pape_url'] = url_for(
             request.basu_url, page=paginate.next_num, perPage=per_page, _external=True)
     return links
 

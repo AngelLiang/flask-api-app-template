@@ -1,0 +1,29 @@
+Delete User Model by user_id
+---
+tags:
+  - User
+
+consumes:
+  - application/json
+
+parameters:
+  - name: Authorization
+    in: header
+    type: string
+    require: true
+    description: token
+    default: token <TOKEN>
+  - in: path
+    name: user_id
+    require: true
+    default: 1
+
+produces:
+  - application/json
+responses:
+  200:
+    description: OK
+  400:
+    description: Client Error
+    schema:
+      $ref: '#/definitions/ErrorResponseJson'
