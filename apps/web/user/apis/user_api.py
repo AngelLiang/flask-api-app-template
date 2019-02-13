@@ -42,10 +42,10 @@ class UserAPI(MethodView):
         data = user_to_dict(user)
         return ResponseJson(data=data)
 
-    @swag_from('../docs/user_api/post.yml')
-    def post(self, user_id):
+    @swag_from('../docs/user_api/put.yml')
+    def put(self, user_id):
         """
-        POST /api/v1/users/<user_id>
+        PUT /api/v1/users/<user_id>
         """
 
         request_dict = RequestDict()
@@ -58,7 +58,7 @@ class UserAPI(MethodView):
         db.session.add(user)
         db.session.commit()
         data = user_to_dict(user)
-        return ResponseJson(data=data), 201
+        return ResponseJson(data=data)
 
     @swag_from('../docs/user_api/delete.yml')
     def delete(self, user_id):
