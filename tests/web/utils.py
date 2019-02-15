@@ -44,9 +44,11 @@ def get_token(client, username='admin', password='admin'):
     return json_data['data']['token']
 
 
-def gen_auth_headers(token, auth_type='token'):
-    return {
+def gen_auth_headers(token, auth_type='token', is_json=True):
+    d = {
         'Authorization': auth_type + ' ' + token,
-        'Content-Type': 'application/json',
         'Accept': 'application/json',
     }
+    if is_json:
+        d['Content-Type'] = 'application/json'
+    return d

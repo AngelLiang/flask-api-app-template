@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from apps.web.extensions import db
 from apps.web.utils import JsonType
+from apps.web.mixin import ModelMixin
 
 
 Model = db.Model
@@ -20,7 +21,7 @@ Boolean = db.Boolean
 DateTime = db.DateTime
 
 
-class User(Model):
+class User(Model, ModelMixin):
     """用户"""
     __tablename__ = 'user'
     id = Column('user_id', Integer, primary_key=True)
@@ -93,6 +94,15 @@ class User(Model):
     def is_administrator(self):
         from apps.web.role.literals import ADMINISTRATOR
         return ADMINISTRATOR in [role.name for role in self.roles]
+
+    @classmethod
+    def is_username_exist(cls, username):
+        # user = User.query.filter(exists().where(User.username == username)).first()
+        return User.query.filter(User.username == username).first()
+
+    @classmethod
+    def get_by_username(cls, username):
+        return User.query.filter_by(username=username).first_or_404()
 
     def to_dict(self):
         d = dict(

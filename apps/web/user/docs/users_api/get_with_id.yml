@@ -1,4 +1,4 @@
-Get User Model by user_id
+get a single user
 ---
 tags:
   - User
@@ -7,15 +7,8 @@ consumes:
   - application/json
 
 parameters:
-  - name: Authorization
-    in: header
-    type: string
-    require: true
-    description: token
-  - in: path
-    name: user_id
-    require: true
-    default: 1
+  - $ref: '#/definitions/AuthorizationToken'
+  - $ref: '#/definitions/PathUserId'
 
 produces:
   - application/json
@@ -30,6 +23,19 @@ responses:
       $ref: '#/definitions/ErrorResponseJson'
 
 definitions:
+  AuthorizationToken:
+    name: Authorization
+    in: header
+    type: string
+    require: true
+    description: token
+    default: token
+  PathUserId:
+    in: path
+    name: user_id
+    require: false
+    default: 1
+
   UserModel:
     properties:
       id:

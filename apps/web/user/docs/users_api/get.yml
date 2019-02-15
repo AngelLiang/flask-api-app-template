@@ -1,32 +1,16 @@
-Get User Model List
+get a list of users
 ---
 tags:
   - User
 
 parameters:
-  - name: Authorization
-    in: header
-    type: string
-    require: true
-    description: token
-  - name: page
-    in: query
-    type: integer
-    require: false
-    default: 1
-  - name: perPage
-    in: query
-    type: integer
-    require: false
-    default: 10
-  - name: sort
-    in: query
-    type: string
-    require: false
-  - name: order
-    in: query
-    type: string
-    require: false
+  - $ref: '#/definitions/AuthorizationToken'
+  - $ref: '#/definitions/Page'
+  - $ref: '#/definitions/PerPage'
+  - $ref: '#/definitions/Sort'
+  - $ref: '#/definitions/Order'
+
+  - $ref: '#/definitions/PathUserId'
 
 produces:
   - application/json
@@ -41,40 +25,56 @@ responses:
       $ref: '#/definitions/ErrorResponseJson'
 
 definitions:
-  CommenListResponse:
+  AuthorizationToken:
+    name: Authorization
+    in: header
+    type: string
+    require: true
+    description: token
+    default: token
+  Page:
+    name: page
+    in: query
+    type: integer
+    require: false
+    default: 1
+  PerPage:
+    name: perPage
+    in: query
+    type: integer
+    require: false
+    default: 10
+  Sort:
+    name: sort
+    in: query
+    type: string
+    require: false
+  Order:
+    name: order
+    in: query
+    type: string
+    require: false
+
+  PathUserId:
+    in: path
+    name: user_id
+    require: false
+    default: 1
+
+  Pagination:
     properties:
-      current_page:
+      page:
         type: integer
-        require: true
-        example: 1
-      has_prev:
-        type: boolean
-        require: true
-        example: false
-      has_next:
-        type: boolean
-        require: true
-        example: false
-      next_number:
+      perPage:
         type: integer
-        require: true
-        example: null
-      prev_number:
-        type: integer
-        require: true
-        example: null
       total:
         type: integer
-        require: false
-        example: 1
-      total_pages:
-        type: integer
-        require: true
-        example: 1
-      items:
+
+  CommenListResponse:
+    properties:
+      pagination:
         type: object
-        example: []
-      items_size:
-        type: integer
-        require: true
-        example: 1
+      data:
+        type: object
+      links:
+        type: object

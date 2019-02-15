@@ -1,4 +1,4 @@
-Delete User Model by user_id
+delete a single user
 ---
 tags:
   - User
@@ -7,12 +7,7 @@ consumes:
   - application/json
 
 parameters:
-  - name: Authorization
-    in: header
-    type: string
-    require: true
-    description: token
-    default: token <TOKEN>
+  - $ref: '#/definitions/AuthorizationToken'
   - in: path
     name: user_id
     require: true
@@ -23,6 +18,8 @@ produces:
 responses:
   200:
     description: OK
+  204:
+    description: No Content
   400:
     description: Client Error
     schema:

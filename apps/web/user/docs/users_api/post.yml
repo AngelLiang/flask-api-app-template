@@ -1,4 +1,4 @@
-Create a User Model
+create a new user
 ---
 tags:
   - User
@@ -7,11 +7,7 @@ consumes:
   - application/json
 
 parameters:
-  - name: Authorization
-    in: header
-    type: string
-    require: true
-    description: token
+  - $ref: '#/definitions/AuthorizationToken'
   - in: body
     name: User Information object
     schema:
@@ -25,12 +21,10 @@ parameters:
           type: string
           require: true
           description: password
-        is_active:
-          type: boolean
-          default: false
-        phone:
-          type: boolean
-          default: false
+        rolename:
+          type: string
+          require: false
+          default: ''
 
 produces:
   - application/json
@@ -39,6 +33,8 @@ responses:
     description: OK
     schema:
       $ref: '#/definitions/UserModel'
+  201:
+    description: Created
   400:
     description: Client Error
     schema:
