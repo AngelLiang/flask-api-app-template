@@ -20,7 +20,7 @@ from apps.web.user.models import User
 
 def create_app(config_name=None):
     if config_name is None:
-        config_name = os.getenv('FLASK_ENV', 'development')
+        config_name = os.getenv('FLASK_CONFIG', 'development')
 
     app = Flask(__name__)
 
