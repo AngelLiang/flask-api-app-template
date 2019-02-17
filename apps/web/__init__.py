@@ -2,15 +2,16 @@
 
 import os
 
+
 import click
 from flask import Flask
 from flasgger import LazyJSONEncoder
-
 
 from apps.web.extensions import db, swagger
 from apps.web.settings import config
 
 from apps.web.errors import register_errors
+from apps.web.logging import register_logger
 
 from apps.web.permission.models import Permission
 from apps.web.role.models import Role
@@ -27,12 +28,14 @@ def create_app(config_name=None):
     app.config.from_object(config[config_name])
 
     # 注册各种模块
+    register_logger(app)
     register_extensions(app)
     register_apis(app)
     register_shell_context(app)
     register_commands(app)
     register_errors(app)
 
+    app.logger.info('Create Flask App')
     return app
 
 
