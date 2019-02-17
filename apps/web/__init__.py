@@ -35,7 +35,7 @@ def create_app(config_name=None):
     register_commands(app)
     register_errors(app)
 
-    app.logger.info('Create Flask App')
+    app.logger.info('Create {} Flask App'.format(config_name))
     return app
 
 
