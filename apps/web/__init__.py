@@ -11,7 +11,7 @@ from apps.web.extensions import db, swagger
 from apps.web.settings import config
 
 from apps.web.errors import register_errors
-from apps.web.logging import register_logger
+from apps.web.logging import register_logger, register_queue_logger
 
 from apps.web.permission.models import Permission
 from apps.web.role.models import Role
@@ -29,6 +29,7 @@ def create_app(config_name=None):
 
     # 注册各种模块
     register_logger(app)
+    # register_queue_logger(app)
     register_extensions(app)
     register_apis(app)
     register_shell_context(app)
