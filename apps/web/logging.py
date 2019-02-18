@@ -1,9 +1,17 @@
 # coding=utf-8
 
+import os
 import queue
 import logging
 from logging.handlers import RotatingFileHandler
 from logging.handlers import QueueHandler, QueueListener
+
+
+def _get_or_create_logs_folder(log_path='logs', filename='flask-app.log'):
+    if not os.path.exists(log_path):
+        os.mkdir(log_path)
+    log_file_path = os.path.join(log_path, filename)
+    return log_file_path
 
 
 def register_logger(app):
@@ -12,8 +20,9 @@ def register_logger(app):
     formatter = logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
+    log_file_path = _get_or_create_logs_folder()
     file_handler = RotatingFileHandler(
-        'logs/flask-app.log', maxBytes=10 * 1024 * 1024, backupCount=10)
+        log_file_path, maxBytes=10 * 1024 * 1024, backupCount=10)
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.INFO)
 
