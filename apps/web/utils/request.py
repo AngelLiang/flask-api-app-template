@@ -61,7 +61,8 @@ class RequestDict(UserDict, ImmutableMultiDictMixin):
         try:
             return self.data['_per_page']
         except KeyError:
-            self.data['_per_page'] = request.values.get(key, default=default, type=int)
+            self.data['_per_page'] = request.values.get(
+                key, default=default, type=int)
             return self.data['_per_page']
 
     def get_from_query_string(self, key, to_camelize=True):
