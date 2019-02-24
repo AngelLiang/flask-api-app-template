@@ -3,8 +3,7 @@
 from sqlalchemy import func
 from flasgger.utils import swag_from
 
-from flask import request, jsonify
-from flask import g
+from flask import request, jsonify, g
 
 from apps.web.extensions import db
 
