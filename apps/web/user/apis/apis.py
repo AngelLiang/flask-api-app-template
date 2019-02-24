@@ -43,7 +43,7 @@ def user_change_password():
     return jsonify(), 204
 
 
-@user_bp.route("/user/<user_id>/is_active", methods=['POST'])
+@user_bp.route("/user/<user_id>/isActive", methods=['POST'])
 @api_login_required
 @swag_from('../docs/user_is_active.yml')
 def user_is_active(user_id):
@@ -52,22 +52,19 @@ def user_is_active(user_id):
     requset path：
         user_id: 用户id
     request body:
-        is_active: bool, True - 启用
+        isActive: bool, True - 启用
                          False - 禁用
     """
-
-    try:
-        user = User.query.get(int(user_id))
-    except ValueError:
-        raise APIException()
+    user = User.get_by_id(user_id)
 
     request_json = request.get_json()
     if not request_json:
         raise APIException()
     try:
-        is_active = request_json['is_active']
+        is_active = request_json['isActive']
     except KeyError:
         raise APIException()
+
     user.is_active = is_active
     db.session.add(user)
     db.session.commit()
