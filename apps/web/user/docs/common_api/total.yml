@@ -1,14 +1,14 @@
-Delete User Token For User Logout
+get users total
 ---
 tags:
-  - User Token
+  - User
 
 parameters:
   - $ref: "#/definitions/AuthorizationToken"
 
 responses:
-  204:
-    description: No Content
+  200:
+    description: OK
   400:
     description: Client Error
     schema:

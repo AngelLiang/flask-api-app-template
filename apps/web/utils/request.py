@@ -20,8 +20,7 @@ class RequestDict(UserDict, ImmutableMultiDictMixin):
             self._query_string.update(request.args)
             if to_uncamelize:
                 # 驼峰转下划线
-                self._query_string.update(
-                    uncamelize_for_dict_key(request.args))
+                self._query_string.update(uncamelize_for_dict_key(request.args))
             self.update(self._query_string)
         if request.is_json:
             self._json = {}
@@ -79,8 +78,7 @@ class RequestDict(UserDict, ImmutableMultiDictMixin):
         try:
             return self.data['_per_page']
         except KeyError:
-            self.data['_per_page'] = request.values.get(
-                key, default=default, type=int)
+            self.data['_per_page'] = request.values.get(key, default=default, type=int)
             return self.data['_per_page']
 
     def get_from_query_string(self, key, to_uncamelize=True, *arg, **kw):

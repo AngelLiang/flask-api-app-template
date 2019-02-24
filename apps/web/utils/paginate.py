@@ -2,7 +2,7 @@
 
 
 def paginate2dict(paginate, items=None, total=None):
-    d = {
+    data = {
         "items": items or [item.to_dict() for item in paginate.items],
         "items_size": len(paginate.items),
         "current_page": paginate.page,  # 当前页数
@@ -13,5 +13,5 @@ def paginate2dict(paginate, items=None, total=None):
         "next_page": paginate.next_num,   # 后一页数
     }
     if total:
-        d['items_total'] = total
-    return d
+        data['items_total'] = total
+    return data

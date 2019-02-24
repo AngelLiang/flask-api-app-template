@@ -1,12 +1,14 @@
 # coding=utf-8
 
-# import os
+import os
 import datetime as dt
 
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import url_for
 
 from apps.web.extensions import db
 from apps.web.utils import JsonType
+from apps.web.utils import camelize_for_dict_key, exclude_dict_key
 from apps.web.mixin import ModelMixin
 
 
@@ -104,8 +106,8 @@ class User(Model, ModelMixin):
     def get_by_username(cls, username):
         return User.query.filter_by(username=username).first_or_404()
 
-    def to_dict(self):
-        d = dict(
+    def to_dict(self, include: list = None, exclude: list = None, to_camelize=True):
+        data = dict(
             id=self.id,
             username=self.username,
 
@@ -119,22 +121,39 @@ class User(Model, ModelMixin):
             phone=self.phone,
             is_phone_confirm=self.is_phone_confirm
         )
-        return d
+        if include:
+            if 'roles' in include:
+                data['roles'] = [role.name for role in self.roles]
+        if exclude:
+            data = exclude_dict_key(data, exclude)
+        if to_camelize:
+            data = camelize_for_dict_key(data)
+        return data
 
     @staticmethod
-    def init_data(commit=True):
-        admin = User.query.filter_by(username='admin').first()
+    def init_data(username='admin', password='admin', commit=True):
+        admin = User.query.filter_by(username=username).first()
         if not admin:
             admin = User()
-        admin.username = 'admin'
-        admin.set_password('admin')
+        admin.username = username
+        admin.set_password(password)
         db.session.add(admin)
+        return commit and db.session.commit(), admin
 
-        admin01 = User.query.filter_by(username='admin01').first()
-        if not admin01:
-            admin01 = User()
-        admin01.username = 'admin01'
-        admin01.set_password('admin')
-        db.session.add(admin01)
 
-        return commit and db.session.commit()
+def user_to_dict(user: User, include: list = None, exclude: list = None, to_camelize=True):
+    data = user.to_dict(include=include, exclude=exclude, to_camelize=to_camelize)
+
+    # add links
+    links = dict()
+    if not user.is_administrator():
+        links['changeUserActive'] = url_for('user_bp.user_is_active', user_id=user.id, _external=True)
+    data['links'] = links
+
+    if include:
+        pass
+    if exclude:
+        data = exclude_dict_key(data, exclude)
+    if to_camelize:
+        data = camelize_for_dict_key(data)
+    return data

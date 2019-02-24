@@ -1,0 +1,43 @@
+create a new user
+---
+tags:
+  - User
+
+consumes:
+  - application/json
+
+parameters:
+  - $ref: "#/definitions/AuthorizationToken"
+  - $ref: "#/definitions/UserModelBodyJson"
+  - $ref: "#/definitions/Include"
+  - $ref: "#/definitions/Exclude"
+
+produces:
+  - application/json
+responses:
+  201:
+    description: Created
+  400:
+    description: Client Error
+    schema:
+      $ref: "#/definitions/ErrorResponseJson"
+
+defintions:
+  UserModelBodyJson:
+    in: body
+    name: user json
+    schema:
+      type: object
+      properties:
+        username:
+          type: string
+          description: username
+        password:
+          type: string
+          description: user password
+        rolename:
+          type: string
+          description: user role
+        description:
+          type: string
+          description: user description

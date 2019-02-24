@@ -1,0 +1,26 @@
+change a single user's active
+---
+tags:
+  - User
+
+parameters:
+  - $ref: "#/definitions/AuthorizationToken"
+  - $ref: "#/definitions/PathUserId"
+
+  - in: body
+    name: Request Json Body
+    schema:
+      type: object
+      properties:
+        isActive:
+          type: boolean
+          require: true
+          description: Change user is_active
+
+responses:
+  200:
+    description: OK
+  400:
+    description: Client Error
+    schema:
+      $ref: "#/definitions/ErrorResponseJson"

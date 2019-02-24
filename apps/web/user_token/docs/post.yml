@@ -1,14 +1,14 @@
-Generate User Token, For User Login
+Generate User Token For User Login
 ---
 tags:
-  - Token
+  - User Token
 
 consumes:
   - application/json
 
 parameters:
   - in: body
-    name: user login api
+    name: user login json
     schema:
       type: object
       properties:
@@ -24,12 +24,24 @@ parameters:
           description: password
 
 responses:
-  200:
-    description: OK
+  201:
+    description: Created a token
+    schema:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            token:
+              type: string
+        links:
+          type: string
+        self:
+          type: string
   400:
     description: Client Error
     schema:
-      $ref: '#/definitions/ErrorResponseJson'
+      $ref: "#/definitions/ErrorResponseJson"
 
 definitions:
   code:
@@ -46,6 +58,64 @@ definitions:
   ErrorResponseJson:
     properties:
       code:
-        $ref: '#/definitions/code'
+        $ref: "#/definitions/code"
       message:
-        $ref: '#/definitions/message'
+        $ref: "#/definitions/message"
+
+  AuthorizationToken:
+    name: Authorization
+    in: header
+    type: string
+    require: true
+    default: token
+    description: token, 格式是"token+空格+{token}"
+
+  Page:
+    name: page
+    in: query
+    type: integer
+    require: false
+    default: 1
+  PerPage:
+    name: perPage
+    in: query
+    type: integer
+    require: false
+    default: 10
+  Sort:
+    name: sort
+    in: query
+    type: string
+    require: false
+    description: sort by model key
+  Order:
+    name: order
+    in: query
+    type: string
+    require: false
+    description: desc or asc
+
+  Pagination:
+    type: object
+    properties:
+      page:
+        type: integer
+      perPage:
+        type: integer
+      total:
+        type: integer
+    description: 分页对象
+
+  Include:
+    name: include
+    in: query
+    type: string
+    require: false
+    description: include the model key, split by comma(,)
+
+  Exclude:
+    name: exclude
+    in: query
+    type: string
+    require: false
+    description: exclude the model key, split by comma(,)

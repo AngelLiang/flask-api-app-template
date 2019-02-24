@@ -3,30 +3,6 @@
 import datetime as dt
 from sqlalchemy import inspect, desc
 from flask import url_for, request
-from apps.web.user.models import User
-
-
-def user_to_dict(user: User):
-    d = dict(
-        id=user.id,
-        username=user.username,
-        isActive=user.is_active,
-        state=user.state,
-        createDatetime=dt.datetime.strftime(
-            user.create_datetime, '%Y-%m-%d %H:%M:%S'),
-        fullname=user.fullname,
-        email=user.email,
-        isEmailConfirm=user.is_email_confirm,
-        phone=user.phone,
-        isPhoneConfirm=user.is_phone_confirm,
-        additionalInfo=user.additional_info,
-    )
-    links = dict()
-    if not user.is_administrator():
-        links['changeUserActive'] = url_for(
-            'user_bp.user_is_active', user_id=user.id, _external=True)
-    d['links'] = links
-    return d
 
 
 def gen_pagination(page, per_page, total=None):

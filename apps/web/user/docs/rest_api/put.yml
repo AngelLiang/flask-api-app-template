@@ -1,0 +1,28 @@
+update a single user
+---
+tags:
+  - User
+
+consumes:
+  - application/json
+
+parameters:
+  - $ref: "#/definitions/AuthorizationToken"
+  - $ref: "#/definitions/PathUserId"
+  - $ref: "#/definitions/Include"
+  - $ref: "#/definitions/Exclude"
+
+  - in: body
+    name: User Information json
+    schema:
+      $ref: "#/definitions/UserModelBodyJson"
+
+produces:
+  - application/json
+responses:
+  200:
+    description: OK
+  400:
+    description: Client Error
+    schema:
+      $ref: "#/definitions/ErrorResponseJson"

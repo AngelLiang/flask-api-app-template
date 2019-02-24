@@ -45,3 +45,12 @@ def sort_list(Model, sql, sort, order):
             else:
                 sql = sql.order_by(asc(sort))
     return sql
+
+
+def exclude_dict_key(data: dict, exclude: list):
+    """排除dict的key"""
+    if exclude:
+        del_keys = set(exclude) & set(data.keys())
+        for item in del_keys:
+            del data[item]
+    return data

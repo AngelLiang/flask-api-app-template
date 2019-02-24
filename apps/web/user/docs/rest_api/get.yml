@@ -1,0 +1,35 @@
+get a list of users
+---
+tags:
+  - User
+
+parameters:
+  - $ref: "#/definitions/AuthorizationToken"
+  - $ref: "#/definitions/Page"
+  - $ref: "#/definitions/PerPage"
+  - $ref: "#/definitions/Sort"
+  - $ref: "#/definitions/Order"
+  - $ref: "#/definitions/Include"
+  - $ref: "#/definitions/Exclude"
+
+produces:
+  - application/json
+responses:
+  200:
+    description: OK
+  400:
+    description: Client Error
+    schema:
+      $ref: "#/definitions/ErrorResponseJson"
+
+definitions:
+  CommonListResponse:
+    type: object
+    properties:
+      pagination:
+        type: object
+      data:
+        type: object
+      links:
+        type: object
+    description: a common response for getting a list

@@ -1,33 +1,24 @@
 # coding=utf-8
-"""
-URL: /api/v1/user
-"""
 
 from sqlalchemy import func
 from flasgger.utils import swag_from
-
 from flask import current_app
 from flask.views import MethodView
 
 from apps.web.extensions import db
-
 from apps.web.exceptions import APIException
-
 from apps.web.utils import RequestDict, ResponseJson
-from apps.web.utils.apis import gen_links, gen_pagination, sort_list
-
+from apps.web.utils import gen_links, gen_pagination, sort_list
 from apps.web.auth.decorator import api_login_required
-
-from apps.web.user.models import User
-from apps.web.user.utils import user_to_dict
+from apps.web.user.models import User, user_to_dict
 from apps.web.user.apis import user_bp
 
 
 class UsersAPI(MethodView):
     decorators = [api_login_required]
 
-    @swag_from('../docs/users_api/get.yml', endpoint='user_bp.users_api')
-    @swag_from('../docs/users_api/get_with_id.yml', endpoint='user_bp.users_api_with_id')
+    @swag_from('../docs/rest_api/get.yml', endpoint='user_bp.users_api')
+    @swag_from('../docs/rest_api/get_with_id.yml', endpoint='user_bp.users_api_with_id')
     def get(self, user_id=None):
         """
         GET /api/v1/users
@@ -36,23 +27,26 @@ class UsersAPI(MethodView):
         if user_id is None:
             # return a list of users
             request_dict = RequestDict()
-            page = request_dict.get_page()
-            per_page = request_dict.get_per_page()
 
             user_query = User.query
 
             # 排序：默认按id升序排序
             sort = request_dict.get('sort', default='id')   # 排序的column
-            order = request_dict.get('order', default='asc')  # 排序顺序：`asc` or `desc`
+            # 排序顺序：`asc` or `desc`
+            order = request_dict.get('order', default='asc')
             if sort == 'id':
                 sort = 'user_id'
             user_query = sort_list(User, user_query, sort, order)
 
             # 分页
+            page = request_dict.get_page()
+            per_page = request_dict.get_per_page()
             paginate = user_query.paginate(page, per_page)
             total = db.session.query(func.count('*')).select_from(User).scalar()
 
-            items = [user_to_dict(item) for item in paginate.items]
+            include = request_dict.get_include()
+            exclude = request_dict.get_exclude()
+            items = [user_to_dict(item, include=include, exclude=exclude) for item in paginate.items]
             return ResponseJson(
                 data=items,
                 links=gen_links(paginate, per_page),
@@ -61,54 +55,59 @@ class UsersAPI(MethodView):
         else:
             # expose a single user
             user = User.get_by_id(user_id)
-            data = user_to_dict(user)
-            # data = user.to_dict()
+            request_dict = RequestDict()
+            include = request_dict.get_include()
+            exclude = request_dict.get_exclude()
+            data = user_to_dict(user, include=include, exclude=exclude)
             return ResponseJson(data=data)
 
-    @swag_from('../docs/users_api/post.yml')
+    @swag_from('../docs/rest_api/post.yml')
     def post(self):
         """
         POST /api/v1/users
         """
         request_dict = RequestDict()
-        request_dict.check('username', 'password')  # 检查必须传入的请求参数
-
-        username = request_dict['username']
-        password = request_dict['password']
+        # check
+        username, password = request_dict.check('username', 'password')
 
         if User.is_username_exist(username):
             raise APIException('用户名已经存在！')
+
+        # creata
         user = User()
+        # update
         user.username = username
         user.set_password(password)
         rolename = request_dict.get('rolename')
         if rolename:
             user.add_role(rolename, commit=False)
+        # commit
         db.session.add(user)
         db.session.commit()
 
-        data = user_to_dict(user)
-        # data = user.to_dict()
+        include = request_dict.get_include()
+        exclude = request_dict.get_exclude()
+        data = user_to_dict(user, include=include, exclude=exclude)
         return ResponseJson(data=data), 201
 
-    @swag_from('../docs/users_api/put.yml')
+    @swag_from('../docs/rest_api/put.yml')
     def put(self, user_id):
         """
         PUT /api/v1/users/<user_id>
         """
-        request_dict = RequestDict(to_uncamelize=True)
-        # print(request_dict)
-        # request_dict.check('username', 'password')
+        request_dict = RequestDict()
 
         user = User.get_by_id(user_id)
-        input_json = request_dict.get_json()
+        # update
+        input_json = request_dict.get_json(to_uncamelize=True)
         user.update(**input_json)
 
-        data = user_to_dict(user)
-        # data = user.to_dict()
+        include = request_dict.get_include()
+        exclude = request_dict.get_exclude()
+        data = user_to_dict(user, include=include, exclude=exclude)
         return ResponseJson(data=data)
 
-    @swag_from('../docs/users_api/delete.yml')
+    @swag_from('../docs/rest_api/delete.yml')
     def delete(self, user_id):
         """
         DELETE /api/v1/users/<user_id>

@@ -7,11 +7,8 @@ consumes:
   - application/json
 
 parameters:
-  - $ref: '#/definitions/AuthorizationToken'
-  - in: path
-    name: user_id
-    require: true
-    default: 1
+  - $ref: "#/definitions/AuthorizationToken"
+  - $ref: "#/definitions/PathUserId"
 
 produces:
   - application/json
@@ -23,4 +20,4 @@ responses:
   400:
     description: Client Error
     schema:
-      $ref: '#/definitions/ErrorResponseJson'
+      $ref: "#/definitions/ErrorResponseJson"

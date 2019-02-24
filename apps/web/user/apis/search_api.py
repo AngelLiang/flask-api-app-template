@@ -2,24 +2,15 @@
 """
 用户查询接口
 """
-
 from sqlalchemy import func
-
 from flasgger.utils import swag_from
-
 from flask import request, jsonify
 
-
 from apps.web.exceptions import APIException
-
-from apps.web.auth.decorator import api_login_required
-
 from apps.web.utils import RequestDict, ResponseJson
-from apps.web.utils.apis import gen_links, gen_pagination
-from apps.web.utils.apis import sort_list
-
-from apps.web.user.models import User
-from apps.web.user.utils import user_to_dict
+from apps.web.utils import gen_links, gen_pagination, sort_list
+from apps.web.auth.decorator import api_login_required
+from apps.web.user.models import User, user_to_dict
 from apps.web.user.apis import user_bp
 
 

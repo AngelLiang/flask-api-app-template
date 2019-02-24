@@ -87,7 +87,8 @@ def register_commands(app):
         Role.init_data()
 
         click.echo('Initializing User...')
-        User.init_data()
+        User.init_data(username='admin', password='admin')
+        User.init_data(username='admin01', password='admin01')
 
         from apps.web.role.literals import ADMINISTRATOR
         admin = User.query.filter_by(username='admin').first()

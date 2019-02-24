@@ -1,0 +1,65 @@
+get a single user
+---
+tags:
+  - User
+
+consumes:
+  - application/json
+
+parameters:
+  - $ref: "#/definitions/AuthorizationToken"
+  - $ref: "#/definitions/PathUserId"
+  - $ref: "#/definitions/Include"
+  - $ref: "#/definitions/Exclude"
+
+produces:
+  - application/json
+responses:
+  200:
+    description: OK
+    schema:
+      type: object
+      properties:
+        data:
+          $ref: "#/definitions/UserModelResponseJson"
+        pagination:
+          $ref: "#/definitions/Pagination"
+        links:
+          type: object
+        self:
+          type: string
+  400:
+    description: Client Error
+    schema:
+      $ref: "#/definitions/ErrorResponseJson"
+
+definitions:
+  PathUserId:
+    in: path
+    name: userId
+    require: false
+    default: 1
+    description: userId in path
+
+  QueryUserId:
+    in: query
+    name: userId
+    require: false
+    default: 1
+    description: userId in query string
+
+  UserModelResponseJson:
+    type: object
+    properties:
+      username:
+        type: string
+        description: username
+      password:
+        type: string
+        description: password
+      rolename:
+        type: string
+        description: user role
+      description:
+        type: string
+        description: description
