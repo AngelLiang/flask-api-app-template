@@ -27,8 +27,11 @@ class BaseConfig(object):
 
 
 class DevelopmentConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI = prefix + os.path.join(BASEDIR, "data-dev.db")
-    # SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:root@127.0.0.1:3306/simple-flask-api-app'
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        "DATABASE_URL",
+        prefix + os.path.join(BASEDIR, "data-dev.db")
+    )
+    # SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:root@127.0.0.1:3306/flask-app'
     # SQLALCHEMY_ECHO = True
 
 

@@ -7,8 +7,6 @@ from sqlalchemy import JSON
 from sqlalchemy.types import TypeDecorator, Text
 from sqlalchemy.ext.mutable import MutableDict
 
-# from apps.web.extensions import db
-
 
 class JSONEncodedDict(TypeDecorator):
     """Represents an immutable structure as a json-encoded string.
@@ -62,8 +60,11 @@ class JSONEncodedDict(TypeDecorator):
 # Usage:
 #
 #   ```
-#   class Model(Base):
-#       ...
-#       additional_json = Column(JsonType)
+#
+#       class Model(Base):
+#           ...
+#           additional_json = Column(JsonType)
+#           additional_info = Column(JsonType, nullable=False, server_default='{}')
+#
 #   ```
 JsonType = MutableDict.as_mutable(JSONEncodedDict)

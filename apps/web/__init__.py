@@ -4,6 +4,7 @@ import os
 
 
 import click
+from pprint import pprint
 from flask import Flask
 from flasgger import LazyJSONEncoder
 
@@ -96,3 +97,8 @@ def register_commands(app):
             admin.add_role(ADMINISTRATOR)
             db.session.add(admin)
             db.session.commit()
+    @app.cli.command()
+    def printconfig():
+        """print the app config"""
+        # click.echo(app.config)
+        pprint(app.config)

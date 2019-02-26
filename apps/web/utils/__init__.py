@@ -2,7 +2,7 @@
 # flake8:noqa
 
 from .paginate import paginate2dict
-from .models import JsonType
+from .json_type import JsonType
 from .request import RequestDict
 from .response import ResponseJson
 from .apis import gen_links, gen_pagination, sort_list, exclude_dict_key
