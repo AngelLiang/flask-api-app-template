@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import url_for
 
 from apps.web.extensions import db
-from apps.web.utils import JsonType
+from apps.web.utils import JsonType, datetime_format
 from apps.web.utils import camelize_for_dict_key, exclude_dict_key
 from apps.web.mixin import ModelMixin
 
@@ -112,8 +112,7 @@ class User(Model, ModelMixin):
             username=self.username,
 
             is_active=self.is_active,
-            create_datetime=dt.datetime.strftime(
-                self.create_datetime, '%Y-%m-%d %H:%M:%S'),
+            create_datetime=datetime_format(self.create_datetime),
 
             fullname=self.fullname,
             email=self.email,

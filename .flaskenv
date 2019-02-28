@@ -1,1 +1,1 @@
-FLASK_APP = apps.web
+FLASK_APP = 'apps.web'
