@@ -1,16 +1,14 @@
 # coding=utf-8
 
 import os
-
-
 import click
 from pprint import pprint
 from flask import Flask
 from flasgger import LazyJSONEncoder
 
 from apps.web.extensions import db, swagger
+from apps.web.extensions import avatars
 from apps.web.settings import config
-
 from apps.web.errors import register_errors
 from apps.web.logging import register_logger, register_queue_logger
 
@@ -37,12 +35,13 @@ def create_app(config_name=None):
     register_commands(app)
     register_errors(app)
 
-    app.logger.info('Create {} Flask App'.format(config_name))
+    # app.logger.info('Create {} Flask App'.format(config_name))
     return app
 
 
 def register_extensions(app):
     db.init_app(app)
+    avatars.init_app(app)
 
     app.json_encoder = LazyJSONEncoder
     swagger.init_app(app)
@@ -60,7 +59,7 @@ def register_apis(app):
 def register_shell_context(app):
     @app.shell_context_processor
     def make_shell_context():
-        return dict(db=db)
+        return dict(db=db, User=User, Role=Role)
 
 
 def register_commands(app):
@@ -88,15 +87,18 @@ def register_commands(app):
         Role.init_data()
 
         click.echo('Initializing User...')
-        User.init_data(username='admin', password='admin')
-        User.init_data(username='admin01', password='admin01')
+        admin = User.init_data(username='admin', password='admin', commit=False)
+        user = User.init_data(username='user', password='user', commit=False)
 
-        from apps.web.role.literals import ADMINISTRATOR
-        admin = User.query.filter_by(username='admin').first()
-        if admin:
-            admin.add_role(ADMINISTRATOR)
-            db.session.add(admin)
-            db.session.commit()
+        from apps.web.role.literals import ADMINISTRATOR, USER
+        admin.add_role(ADMINISTRATOR)
+        user.add_role(USER)
+        db.session.add(admin)
+        db.session.add(user)
+        db.session.commit()
+
+        click.echo('Done.')
+
     @app.cli.command()
     def printconfig():
         """print the app config"""

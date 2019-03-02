@@ -44,7 +44,7 @@ class Role(Model):
     def init_data(commit=True):
         for i, rolename in enumerate(ALL_ROLES, start=1):
             role = Role.query.get(i)
-            if not role:
+            if role is None:
                 role = Role()
             role.name = rolename
             db.session.add(role)

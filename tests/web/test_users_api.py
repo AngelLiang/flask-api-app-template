@@ -61,9 +61,10 @@ class UsersAPITestCase(unittest.TestCase):
         token = get_token(self.client, username='admin', password='admin')
         response = self.client.put(url_for(
             'user_bp.users_api_with_id', user_id=admin.id),
-            json=dict(fullname='test'),
+            json=dict(fullname='fullname', description='description'),
             headers=gen_auth_headers(token)
         )
         # print(response.json)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json['data']['fullname'], 'test')
+        self.assertEqual(response.json['data']['fullname'], 'fullname')
+        self.assertEqual(response.json['data']['description'], 'description')

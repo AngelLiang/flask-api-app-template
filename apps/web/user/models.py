@@ -5,8 +5,9 @@ import datetime as dt
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import url_for
+from flask_avatars import Identicon
 
-from apps.web.extensions import db
+from apps.web.extensions import db, avatars
 from apps.web.utils import JsonType, datetime_format
 from apps.web.utils import camelize_for_dict_key, exclude_dict_key
 from apps.web.mixin import ModelMixin
@@ -21,6 +22,7 @@ Integer = db.Integer
 String = db.String
 Boolean = db.Boolean
 DateTime = db.DateTime
+Text = db.Text
 
 
 class User(Model, ModelMixin):
@@ -52,6 +54,8 @@ class User(Model, ModelMixin):
     phone = Column(String(20), nullable=False, default='')
     # 手机号码确认标识
     is_phone_confirm = Column(Boolean, nullable=False, default=False)
+    # 描述
+    description = Column(Text(), nullable=False, default='')
 
     # 存储json格式的额外信息
     # additional_info = Column(db.Text(), nullable=False, default='{}')
@@ -106,6 +110,20 @@ class User(Model, ModelMixin):
     def get_by_username(cls, username):
         return User.query.filter_by(username=username).first_or_404()
 
+    def update(self, password=None, commit=True, **kw):
+        if password is not None:
+            self.set_password(password)
+        return ModelMixin.update(self, commit=commit, **kw)
+
+    def generate_avatar(self):
+        """unused"""
+        avatar = Identicon()
+        filenames = avatar.generate(text=self.username)
+        self.avatar_s = filenames[0]
+        self.avatar_m = filenames[1]
+        self.avatar_l = filenames[2]
+        db.session.commit()
+
     def to_dict(self, include: list = None, exclude: list = None, to_camelize=True):
         data = dict(
             id=self.id,
@@ -118,7 +136,12 @@ class User(Model, ModelMixin):
             email=self.email,
             is_email_confirm=self.is_email_confirm,
             phone=self.phone,
-            is_phone_confirm=self.is_phone_confirm
+            is_phone_confirm=self.is_phone_confirm,
+            description=self.description,
+            # avatar
+            avatar=avatars.default(),
+            avatar_s=avatars.default(size='s'),
+            avatar_l=avatars.default(size='l')
         )
         if include:
             if 'roles' in include:
@@ -131,13 +154,13 @@ class User(Model, ModelMixin):
 
     @staticmethod
     def init_data(username='admin', password='admin', commit=True):
-        admin = User.query.filter_by(username=username).first()
-        if not admin:
-            admin = User()
-        admin.username = username
-        admin.set_password(password)
-        db.session.add(admin)
-        return commit and db.session.commit(), admin
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            user = User()
+        user.username = username
+        user.set_password(password)
+        db.session.add(user)
+        return commit and db.session.commit() or user
 
 
 def user_to_dict(user: User, include: list = None, exclude: list = None, to_camelize=True):

@@ -54,9 +54,9 @@ class Permission(Model):
     @staticmethod
     def init_data(commit=True):
         for i, permission_name in enumerate(ALL_PERMISSIONS, start=1):
-            p = Permission.query.get(i)
-            if not p:
-                p = Permission()
-            p.name = permission_name
-            db.session.add(p)
+            permission = Permission.query.get(i)
+            if permission is None:
+                permission = Permission()
+            permission.name = permission_name
+            db.session.add(permission)
         return commit and db.session.commit()

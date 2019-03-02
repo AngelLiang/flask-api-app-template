@@ -81,6 +81,8 @@ class UsersAPI(MethodView):
         rolename = request_dict.get('rolename')
         if rolename:
             user.add_role(rolename, commit=False)
+        input_json = request_dict.get_json(to_uncamelize=True)
+        user.update(**input_json, attrs=('fullname', 'description',), commit=False)
         # commit
         db.session.add(user)
         db.session.commit()
@@ -98,9 +100,9 @@ class UsersAPI(MethodView):
         request_dict = RequestDict()
 
         user = User.get_by_id(user_id)
-        # update
+        # update & commit
         input_json = request_dict.get_json(to_uncamelize=True)
-        user.update(**input_json)
+        user.update(**input_json, attrs=('fullname', 'description',), commit=True)
 
         include = request_dict.get_include()
         exclude = request_dict.get_exclude()
