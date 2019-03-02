@@ -1,9 +1,7 @@
 # coding=utf-8
 
 from functools import wraps
-
 from flask import request
-
 from apps.web.auth.utils import get_token, validate_token
 
 

@@ -65,6 +65,10 @@ class User(Model, ModelMixin):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
+    def get_user_id(self):
+        """for authlib"""
+        return self.id
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 

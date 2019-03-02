@@ -2,16 +2,17 @@
 
 from flask import Blueprint
 from flask import jsonify, request
-# from flask import current_app, g
+from flask import current_app, g
 
 from flasgger.utils import swag_from
 
-from apps.web.extensions import CORS
-
+from apps.web.exceptions import APIException
+from apps.web.extensions import CORS, server
 from apps.web.user.models import User
 from apps.web.auth.utils import generate_token
 
-from apps.web.exceptions import APIException
+from .decorator import api_login_required
+
 
 auth_bp = Blueprint("auth_bp", __name__)
 CORS(auth_bp)
@@ -38,9 +39,6 @@ def login():
     raise APIException('用户名和密码错误！')
 
 
-from .decorator import api_login_required
-
-
 @auth_bp.route("/auth/logout", methods=["POST"])
 @api_login_required
 @swag_from('docs/logout.yml')
@@ -51,3 +49,31 @@ def logout():
     """
     # TODO:
     return '', 204
+
+
+@auth_bp.route('/oauth/authorize', methods=['GET', 'POST'])
+@api_login_required
+def authorize():
+    current_user = g.current_user
+    # Login is required since we need to know the current resource owner.
+    # It can be done with a redirection to the login page, or a login
+    # form on this authorization page.
+    if request.method == 'GET':
+        grant = server.validate_consent_request(end_user=current_user)
+        return jsonify(grant=grant, user=current_user)
+    confirmed = request.values['confirm']
+    if confirmed:
+        # granted by resource owner
+        return server.create_authorization_response(current_user)
+    # denied by resource owner
+    return server.create_authorization_response(None)
+
+
+@auth_bp.route('/oauth/token', methods=['POST'])
+def issue_token():
+    return server.create_token_response()
+
+
+@auth_bp.route('/oauth/revoke', methods=['POST'])
+def revoke_token():
+    return server.create_revocation_response()

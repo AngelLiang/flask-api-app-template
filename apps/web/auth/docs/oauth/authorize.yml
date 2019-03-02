@@ -1,0 +1,7 @@
+user authorize
+---
+tags:
+  - Auth
+
+consumes:
+  - application/json
