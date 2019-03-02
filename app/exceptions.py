@@ -1,27 +1,12 @@
 # coding=utf-8
-class APIBaseException(ValueError):
-    pass
+"""
+
+- :exc:`Exception`
+    - :exc:`~apps.web.exceptions.APIException`
+"""
 
 
-class FailException(APIBaseException):
-    pass
-
-
-class NotFoundException(APIBaseException):
-    pass
-
-
-class ParameterMissException(APIBaseException):
-    pass
-
-
-class ParameterErrorException(APIBaseException):
-    pass
-
-
-class TokenTimeOutException(APIBaseException):
-    pass
-
-
-class TokenErrorException(APIBaseException):
-    pass
+class APIException(Exception):
+    def __init__(self, message='Client Error!', code=400):
+        self.message = message
+        self.code = code

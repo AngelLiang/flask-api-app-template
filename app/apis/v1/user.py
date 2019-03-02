@@ -7,7 +7,7 @@ from flask.views import MethodView
 from sqlalchemy import func
 
 from app.extensions import db
-from app.exceptions import ParameterMissException, NotFoundException
+from app.exceptions import APIException
 from app.utils import JsonResponse, paginate2dict
 from app.models import User
 from app.apis.v1 import api_v1_bp
@@ -48,7 +48,7 @@ class UserAPI(MethodView):
         password = request.values.get('password')
 
         if username is None or password is None:
-            raise ParameterMissException()
+            raise APIException()
 
         user = User()
         user.username = username
@@ -72,7 +72,7 @@ class UserIdAPI(MethodView):
         '''
         user = User.query.get(user_id)
         if not user:
-            raise NotFoundException()
+            raise APIException()
         data = user.to_dict()
         return jsonify(JsonResponse.success(data=data))
 
@@ -85,7 +85,7 @@ class UserIdAPI(MethodView):
 
         user = User.query.get(user_id)
         if not user:
-            raise NotFoundException()
+            raise APIException()
         if username:
             user.username = username
         if password:
@@ -101,7 +101,7 @@ class UserIdAPI(MethodView):
         '''
         user = User.query.get(user_id)
         if not user:
-            raise NotFoundException()
+            raise APIException()
         db.session.delete(user)
         db.session.commit()
         return jsonify(JsonResponse.success())
