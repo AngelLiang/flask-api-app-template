@@ -7,7 +7,7 @@ from flask import current_app, g
 from flasgger.utils import swag_from
 
 from apps.web.exceptions import APIException
-from apps.web.extensions import CORS, server
+from apps.web.extensions import CORS, oauth2_server, oauth1_server
 from apps.web.user.models import User
 from apps.web.auth.utils import generate_token
 
@@ -51,7 +51,34 @@ def logout():
     return '', 204
 
 
-@auth_bp.route('/oauth/authorize', methods=['GET', 'POST'])
+@auth_bp.route('/oauth1/initiate', methods=['POST'])
+def initiate_temporary_credential():
+    return oauth1_server.create_temporary_credential_response()
+
+
+# @auth_bp.route('/oauth1/authorize', methods=['GET', 'POST'])
+# def authorize():
+#     # make sure that user is logged in for yourself
+#     if request.method == 'GET':
+#         try:
+#             req = oauth1_server.check_authorization_request()
+#             return render_template('authorize.html', req=req)
+#         except OAuth1Error as error:
+#             return render_template('error.html', error=error)
+
+#     granted = request.form.get('granted')
+#     if granted:
+#         grant_user = current_user
+#     else:
+#         grant_user = None
+
+#     try:
+#         return oauth1_server.create_authorization_response(grant_user)
+#     except OAuth1Error as error:
+#         return render_template('error.html', error=error)
+
+
+@auth_bp.route('/oauth2/authorize', methods=['GET', 'POST'])
 @api_login_required
 def authorize():
     current_user = g.current_user
@@ -59,21 +86,21 @@ def authorize():
     # It can be done with a redirection to the login page, or a login
     # form on this authorization page.
     if request.method == 'GET':
-        grant = server.validate_consent_request(end_user=current_user)
+        grant = oauth2_server.validate_consent_request(end_user=current_user)
         return jsonify(grant=grant, user=current_user)
     confirmed = request.values['confirm']
     if confirmed:
         # granted by resource owner
-        return server.create_authorization_response(current_user)
+        return oauth2_server.create_authorization_response(current_user)
     # denied by resource owner
-    return server.create_authorization_response(None)
+    return oauth2_server.create_authorization_response(None)
 
 
-@auth_bp.route('/oauth/token', methods=['POST'])
+@auth_bp.route('/oauth2/token', methods=['POST'])
 def issue_token():
-    return server.create_token_response()
+    return oauth2_server.create_token_response()
 
 
-@auth_bp.route('/oauth/revoke', methods=['POST'])
+@auth_bp.route('/oauth2/revoke', methods=['POST'])
 def revoke_token():
-    return server.create_revocation_response()
+    return oauth2_server.create_revocation_response()

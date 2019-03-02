@@ -8,7 +8,8 @@ from flasgger import LazyJSONEncoder
 
 from apps.web.extensions import db, swagger
 from apps.web.extensions import avatars
-from apps.web.extensions import server, init_auth_server
+from apps.web.extensions import oauth2_server, init_oauth2_server
+from apps.web.extensions import oauth1_server, init_oauth1_server
 from apps.web.settings import config
 from apps.web.errors import register_errors
 from apps.web.logging import register_logger, register_queue_logger
@@ -47,7 +48,8 @@ def register_extensions(app):
     app.json_encoder = LazyJSONEncoder
     swagger.init_app(app)
 
-    init_auth_server(server, app)
+    # init_oauth1_server(oauth1_server, app)
+    init_oauth2_server(oauth2_server, app)
 
 
 def register_apis(app):

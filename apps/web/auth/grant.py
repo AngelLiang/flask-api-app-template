@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from authlib.oauth2.rfc6749 import grants
+from authlib.specs.rfc6749 import grants
 from authlib.common.security import generate_token
 
 from apps.web.extensions import db
