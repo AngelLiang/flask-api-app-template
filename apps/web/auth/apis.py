@@ -98,6 +98,11 @@ def authorize():
 
 @auth_bp.route('/oauth2/token', methods=['POST'])
 def issue_token():
+    # 必须给 authorization.create_token_response() 提供以下字段
+    # Authorization: Basic {client_id:client_secret}
+    # query_string or in body: grant_type=password&username=amdin&password=amdin
+
+    # current_app.logger.debug(request.headers)
     return oauth2_server.create_token_response()
 
 
