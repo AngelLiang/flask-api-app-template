@@ -42,6 +42,8 @@ class RequestDict(UserDict, ImmutableMultiDictMixin):
         :param to_uncamelize: 驼峰转下换线
         """
         requset_json = request.get_json(*args, **kw)
+        if requset_json is None:
+            raise APIException()
         if to_uncamelize:
             return uncamelize_for_dict_key(requset_json)
         else:
