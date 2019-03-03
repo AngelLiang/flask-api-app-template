@@ -4,6 +4,7 @@ import copy
 from collections import UserDict
 
 from flask import Request, request
+from werkzeug.utils import cached_property
 from werkzeug.datastructures import ImmutableMultiDictMixin
 
 from apps.web.exceptions import APIException
@@ -12,11 +13,6 @@ from apps.web.utils.override import override
 
 
 class CustomRequest(Request):
-
-    @override
-    def args(self):
-        data = super().args
-        return data
 
     def get_args(self, to_uncamelize=False):
         data = super().args
