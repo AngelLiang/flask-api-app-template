@@ -14,6 +14,7 @@ flask-avatars = "*"
 authlib = "*"
 webargs = "*"
 flask-marshmallow = "*"
+marshmallow-sqlalchemy = "*"
 
 [dev-packages]
 rope = "*"

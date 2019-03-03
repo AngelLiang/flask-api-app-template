@@ -4,12 +4,16 @@ from flask import request
 
 from authlib.flask.oauth2 import AuthorizationServer
 from flask_sqlalchemy import SQLAlchemy
+# make sure that both Flask-SQLAlchemy and marshmallow-sqlalchemy are installed
+# pip install -U flask-sqlalchemy marshmallow-sqlalchemy
+from flask_marshmallow import Marshmallow
 from flask_cors import CORS
 from flask_avatars import Avatars
 from flasgger import Swagger, LazyString
 
 
 db = SQLAlchemy()
+ma = Marshmallow()
 cors = CORS()
 avatars = Avatars()
 
@@ -18,7 +22,6 @@ template = dict(
     base_url=LazyString(lambda: request.base_url)
 )
 swagger = Swagger(template=template)
-
 
 oauth2_server = AuthorizationServer()
 oauth1_server = AuthorizationServer()

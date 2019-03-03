@@ -8,6 +8,7 @@ from flasgger import LazyJSONEncoder
 
 from apps.web.extensions import db, swagger
 from apps.web.extensions import avatars
+from apps.web.extensions import ma
 from apps.web.extensions import oauth2_server, init_oauth2_server
 from apps.web.extensions import oauth1_server, init_oauth1_server
 from apps.web.settings import config
@@ -16,7 +17,7 @@ from apps.web.logging import register_logger, register_queue_logger
 
 from apps.web.permission.models import Permission
 from apps.web.role.models import Role
-from apps.web.user.models import User
+from apps.web.user.models import User, UserSchema
 
 
 def create_app(config_name=None):
@@ -47,9 +48,10 @@ def register_extensions(app):
 
     app.json_encoder = LazyJSONEncoder
     swagger.init_app(app)
+    ma.init_app(app)
 
     # init_oauth1_server(oauth1_server, app)
-    init_oauth2_server(oauth2_server, app)
+    # init_oauth2_server(oauth2_server, app)
 
 
 def register_apis(app):
@@ -64,7 +66,7 @@ def register_apis(app):
 def register_shell_context(app):
     @app.shell_context_processor
     def make_shell_context():
-        return dict(db=db, User=User, Role=Role)
+        return dict(db=db, User=User, UserSchema=UserSchema, Role=Role)
 
 
 def register_commands(app):

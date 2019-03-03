@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import url_for
 from flask_avatars import Identicon
 
-from apps.web.extensions import db, avatars
+from apps.web.extensions import db, avatars, ma
 from apps.web.utils import JsonType, datetime_format
 from apps.web.utils import camelize_for_dict_key, exclude_dict_key
 from apps.web.mixin import ModelMixin
@@ -134,6 +134,7 @@ class User(Model, ModelMixin):
         return commit and db.session.commit()
 
     def to_dict(self, include: list = None, exclude: list = None, to_camelize=True):
+
         data = dict(
             id=self.id,
             username=self.username,
@@ -172,13 +173,29 @@ class User(Model, ModelMixin):
         return commit and db.session.commit() or user
 
 
+class UserSchema(ma.ModelSchema):
+    """
+    https://flask-marshmallow.readthedocs.io/en/latest/
+    """
+    class Meta:
+        model = User
+    links = ma.Hyperlinks({
+        'usersGetUrl': ma.URLFor('user_bp.users_api', _external=False),
+        'usersPostUrl': ma.URLFor('user_bp.users_api', _external=False),
+        'usersWithIdGetUrl': ma.URLFor('user_bp.users_with_id_api', user_id='<id>', _external=False),
+        'usersWithIdPutUrl': ma.URLFor('user_bp.users_with_id_api', user_id='<id>', _external=False),
+        'usersWithIdDeleteUrl': ma.URLFor('user_bp.users_with_id_api', user_id='<id>', _external=False),
+        'changeUserActive': ma.URLFor('user_bp.user_is_active', user_id='<id>', _external=False),
+    })
+
+
 def user_to_dict(user: User, include: list = None, exclude: list = None, to_camelize=True):
     data = user.to_dict(include=include, exclude=exclude, to_camelize=to_camelize)
 
     # add links
     links = dict()
     if not user.is_administrator():
-        links['changeUserActive'] = url_for('user_bp.user_is_active', user_id=user.id, _external=True)
+        links['changeUserActive'] = url_for('user_bp.user_is_active', user_id=user.id, _external=False)
     data['links'] = links
 
     if include:
