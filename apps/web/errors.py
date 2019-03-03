@@ -31,13 +31,17 @@ def register_errors(app):
             return jsonify(code=404, message='Not Found!'), 404
         return render_template('errors.html', code=404, info='Page Not Found'), 404
 
+    @app.errorhandler(422)
+    def error_422(e):
+        return jsonify(code=422, message='Unprocessable Entity!'), 422
+
     @app.errorhandler(500)
     def error_500(e):
         return jsonify(code=500, message='Server Error!'), 500
 
     @app.errorhandler(APIException)
     def api_error_handle(e):
-        return jsonify(code=e.code, message=e.message), e.code
+        return jsonify(code=e.code, message=e.message), e.status_code
 
 
 # def invalid_token():

@@ -12,6 +12,7 @@ flasgger = "*"
 mysql-connector = "*"
 flask-avatars = "*"
 authlib = "*"
+webargs = "*"
 
 [dev-packages]
 rope = "*"

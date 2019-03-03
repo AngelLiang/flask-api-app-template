@@ -29,7 +29,7 @@ class AuthAPITestCase(unittest.TestCase):
         create_user(username='admin', password='admin')
         response = user_login(self.client, username='admin', password='admin')
         data = response.get_json()
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertIsNotNone(data['data']['token'])
 
     def test_2_user_logout(self):

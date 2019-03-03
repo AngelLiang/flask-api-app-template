@@ -93,10 +93,10 @@ class RequestDict(UserDict, ImmutableMultiDictMixin):
                 # 参数有该key且其value不能为None
                 v = self.data[arg]
                 if v is None:
-                    raise APIException(f'{arg}参数不能为空！')
+                    raise APIException(f'{arg}参数不能为空！', code=422)
                 lst.append(v)
         except KeyError:
-            raise APIException(f'缺少{arg}参数！')
+            raise APIException(f'缺少{arg}参数！', code=422)
         return lst
 
     def get_page(self, key='page', default=1):

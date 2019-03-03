@@ -67,8 +67,8 @@ definitions:
     in: header
     type: string
     require: true
-    default: token
-    description: token, 格式是"token+空格+{token}"
+    default: Bearer
+    description: Bearer, 格式是"Bearer+空格+{token}"
 
   Page:
     name: page

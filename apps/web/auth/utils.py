@@ -11,50 +11,61 @@ from apps.web.user.models import User
 
 
 def get_token():
-    """获取token"""
-    # 首先从 header 获取 token
-    # 如果没有则从 values（query string or form）中获取 token
-    # 最后再从 json body 获取 token
-    try:
-        # Authorization: token <TOKEN>
-        token = None
-        Authorization = request.headers.get("Authorization")
-        if Authorization:
+    """
+    首先从 header 获取 token
+    如果没有则从 values（query string or form）中获取 token
+    最后再从 json body 获取 token
+    """
+    # 发送请求时需要把认证令牌附加在请求首部的Authorization字段中，并且在令牌前指定令牌类型（即Bearer）
+    # Authorization: Bearer <TOKEN>
+    token_type = token = None
+    Authorization = request.headers.get("Authorization")
+    if Authorization:
+        try:
             token_type, token = Authorization.split(None, 1)
-            if token_type and token_type.upper() == 'TOKEN':
-                return token
-    except ValueError:  # Authorization字段为空或token为空
-        token = None
+            return token, token_type
+        except ValueError:  # Authorization字段为空或token为空
+            token_type = token = None
+
+    # 从args或values获取token
     if not token:
         token = request.values.get("token")
-    if not token:
-        request_json = request.get_json()
-        if request_json:
-            token = request_json.get("token")
-    return token
+        token_type = request.values.get("token_type")
+
+    # 从json body获取token
+    if not token and request.is_json:
+        token = request.json.get("token")
+        token_type = request.json.get("token_type")
+
+    return token, token_type
 
 
 def generate_token(user, expiration=60 * 60 * 8):
-    """生成token"""
-    s = Serializer(current_app.config["SECRET_KEY"], expires_in=expiration)
-    token = s.dumps({"user_id": user.id})
-    return token.decode()
+    """ return token
+
+    :param user: User
+    :param expiration: unit is second
+    """
+    s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
+    token = s.dumps({
+        'user_id': user.id
+    })
+    return token.decode(), 'Bearer'
 
 
 def validate_token(token):
-    """验证token"""
     if not token:
-        raise APIException('未认证！', 403)
+        raise APIException('Unauthorized!', 401)
     try:
         s = Serializer(current_app.config['SECRET_KEY'])
         data = s.loads(token)
     except BadSignature:
-        raise APIException('Token错误！', 403)
+        raise APIException('Token Error!', 401)
     except SignatureExpired:
-        raise APIException('Token超时！', 403)
+        raise APIException('Token Timeout!', 401)
     else:
         user = User.query.get(data["user_id"])  # 使用令牌中的id来查询对应的用户对象
         if user is None:
             raise APIException('没有该用户！', 404)
-        g.current_user = user  # 将用户对象存储到g上
+        g.token_data = data    # 将解析后的token dict存储到g
         return user

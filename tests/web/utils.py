@@ -28,27 +28,26 @@ def create_user(username='user', password='user'):
 
 
 def user_login(client, username='admin', password='admin'):
-    return client.post(url_for('auth_bp.login'), data=dict(
-        username=username,
-        password=password
-    ))
+    return client.post(
+        url_for('user_token_bp.user_token_api'),
+        data=dict(username=username, password=password)
+    )
 
 
 def get_token(client, username='admin', password='admin'):
-    response = client.post(url_for('auth_bp.login'), data=dict(
-        username=username,
-        password=password
-    ))
+    response = client.post(
+        url_for('user_token_bp.user_token_api'),
+        data=dict(username=username, password=password)
+    )
     json_data = response.get_json()
-    # print(json_data)
     return json_data['data']['token']
 
 
-def gen_auth_headers(token, auth_type='token', is_json=True):
-    d = {
-        'Authorization': auth_type + ' ' + token,
-        'Accept': 'application/json',
-    }
+def gen_auth_headers(token, auth_type='Bearer', is_json=True):
+    data = dict(
+        Authorization=auth_type + ' ' + token,
+        Accept='application/json'
+    )
     if is_json:
-        d['Content-Type'] = 'application/json'
-    return d
+        data['Content-Type'] = 'application/json'
+    return data
