@@ -29,14 +29,14 @@ def create_user(username='user', password='user'):
 
 def user_login(client, username='admin', password='admin'):
     return client.post(
-        url_for('user_token_bp.user_token_api'),
+        url_for('user_token_bp.users_token_api'),
         data=dict(username=username, password=password)
     )
 
 
 def get_token(client, username='admin', password='admin'):
     response = client.post(
-        url_for('user_token_bp.user_token_api'),
+        url_for('user_token_bp.users_token_api'),
         data=dict(username=username, password=password)
     )
     json_data = response.get_json()

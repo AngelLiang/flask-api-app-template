@@ -70,5 +70,5 @@ class UserTokenAPI(MethodView):
         return '', 204
 
 
-view_func = UserTokenAPI.as_view('user_token_api')
+view_func = UserTokenAPI.as_view('users_token_api')
 user_token_bp.add_url_rule('/users/token', view_func=view_func)

@@ -28,7 +28,7 @@ class UserTokenAPITestCase(unittest.TestCase):
         """获取用户token"""
         create_user(username='admin', password='admin')
         response = self.client.post(
-            url_for('user_token_bp.user_token_api'),
+            url_for('user_token_bp.users_token_api'),
             json=dict(username='admin', password='admin')
         )
         data = response.get_json()
@@ -41,7 +41,7 @@ class UserTokenAPITestCase(unittest.TestCase):
         create_user(username='admin', password='admin')
         token = get_token(self.client, username='admin', password='admin')
         response = self.client.delete(
-            url_for('user_token_bp.user_token_api'),
+            url_for('user_token_bp.users_token_api'),
             headers=gen_auth_headers(token, is_json=False)
         )
         # print(response.json)
@@ -52,7 +52,7 @@ class UserTokenAPITestCase(unittest.TestCase):
         create_user(username='admin', password='admin')
         token = get_token(self.client, username='admin', password='admin')
         response = self.client.delete(
-            url_for('user_token_bp.user_token_api'),
+            url_for('user_token_bp.users_token_api'),
             headers=gen_auth_headers(token, is_json=False)
         )
         self.assertEqual(response.status_code, 204)
@@ -62,7 +62,7 @@ class UserTokenAPITestCase(unittest.TestCase):
         create_user(username='admin', password='admin')
         token = get_token(self.client, username='admin', password='admin')
         response = self.client.delete(
-            url_for('user_token_bp.user_token_api', token=token),
+            url_for('user_token_bp.users_token_api', token=token),
         )
         self.assertEqual(response.status_code, 204)
 
@@ -71,7 +71,7 @@ class UserTokenAPITestCase(unittest.TestCase):
         create_user(username='admin', password='admin')
         token = get_token(self.client, username='admin', password='admin')
         response = self.client.delete(
-            url_for('user_token_bp.user_token_api'),
+            url_for('user_token_bp.users_token_api'),
             json=dict(token=token, token_type='Bearer')
         )
         # print(response.json)
