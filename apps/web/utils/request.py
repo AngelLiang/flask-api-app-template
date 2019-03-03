@@ -3,16 +3,21 @@
 import copy
 from collections import UserDict
 
-from flask import Request, request
 from werkzeug.utils import cached_property
 from werkzeug.datastructures import ImmutableMultiDictMixin
+from flask import Request, request
+
+
+from webargs.flaskparser import parser
+from webargs import fields, validate
 
 from apps.web.exceptions import APIException
-from apps.web.utils.string import uncamelize, uncamelize_for_dict_key
-from apps.web.utils.override import override
+from apps.web.utils.string_helper import uncamelize, uncamelize_for_dict_key
+from apps.web.utils.class_helper import override
 
 
 class CustomRequest(Request):
+    """unused"""
 
     def get_args(self, to_uncamelize=False):
         data = super().args
@@ -32,6 +37,21 @@ class CustomRequest(Request):
         if to_uncamelize:
             data = uncamelize_for_dict_key(data)
         return data
+
+
+pagination_args = dict(
+    page=fields.Int(missing=1),
+    perPage=fields.Int(missing=10),
+)
+
+# unused
+query_args = dict(
+    order=fields.Str(required=False),
+    sort=fields.Str(required=False),
+    # # Delimited list, e.g. "/?include=id,name"
+    include=fields.DelimitedList(fields.Str()),
+    exclude=fields.DelimitedList(fields.Str())
+)
 
 
 class RequestDict(UserDict, ImmutableMultiDictMixin):
@@ -102,6 +122,11 @@ class RequestDict(UserDict, ImmutableMultiDictMixin):
     def get_per_page(self, key='perPage', default=10):
         # requset.values 本身有缓存
         return request.values.get(key, default=default, type=int)
+
+    def get_paginagtion(self):
+        # return self.get_page(), self.get_per_page()
+        args = parser.parser(pagination_args, request)
+        return args['page'], args['perPage']
 
     def get_order(self):
         return self.get('order')
