@@ -1,7 +1,8 @@
 # coding=utf-8
 
-from sqlalchemy import inspect, desc, asc
+import copy
 from flask import url_for, request
+from sqlalchemy import inspect, desc, asc
 
 
 def gen_pagination(page, per_page, total=None):
@@ -49,8 +50,10 @@ def sort_list(Model, sql, sort, order):
 
 def exclude_dict_key(data: dict, exclude: list):
     """排除dict的key"""
+    # 深拷贝data，实现pure function
+    temp = copy.deepcopy(data)
     if exclude:
-        del_keys = set(exclude) & set(data.keys())
+        del_keys = set(exclude) & set(temp.keys())
         for item in del_keys:
-            del data[item]
-    return data
+            del temp[item]
+    return temp
