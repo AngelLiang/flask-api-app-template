@@ -128,6 +128,11 @@ class User(Model, ModelMixin):
         self.avatar_l = filenames[2]
         db.session.commit()
 
+    @classmethod
+    def from_dict(cls, commit=True, **kw):
+        """unused"""
+        return commit and db.session.commit()
+
     def to_dict(self, include: list = None, exclude: list = None, to_camelize=True):
         data = dict(
             id=self.id,

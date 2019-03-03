@@ -51,7 +51,7 @@ class UsersAPITestCase(unittest.TestCase):
         admin = create_admin(username='admin', password='admin')
         token = get_token(self.client, username='admin', password='admin')
         response = self.client.get(url_for(
-            'user_bp.users_api_with_id', user_id=admin.id), json=dict(
+            'user_bp.users_with_id_api', user_id=admin.id), json=dict(
         ), headers=gen_auth_headers(token))
         self.assertEqual(response.status_code, 200)
 
@@ -60,7 +60,7 @@ class UsersAPITestCase(unittest.TestCase):
         admin = create_admin(username='admin', password='admin')
         token = get_token(self.client, username='admin', password='admin')
         response = self.client.put(url_for(
-            'user_bp.users_api_with_id', user_id=admin.id),
+            'user_bp.users_with_id_api', user_id=admin.id),
             json=dict(fullname='fullname', description='description'),
             headers=gen_auth_headers(token)
         )

@@ -13,6 +13,7 @@ mysql-connector = "*"
 flask-avatars = "*"
 authlib = "*"
 webargs = "*"
+flask-marshmallow = "*"
 
 [dev-packages]
 rope = "*"

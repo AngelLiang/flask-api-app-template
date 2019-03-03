@@ -124,4 +124,4 @@ view_func = UsersAPI.as_view('users_api')
 # user_bp.add_url_rule('/users', defaults={'user_id': None}, methods=['GET'], view_func=view_func)
 user_bp.add_url_rule('/users', methods=['GET', 'POST'], view_func=view_func)
 user_bp.add_url_rule('/users/<int:user_id>', methods=['GET', 'PUT', 'DELETE'],
-                     endpoint='users_api_with_id', view_func=view_func)
+                     endpoint='users_with_id_api', view_func=view_func)
