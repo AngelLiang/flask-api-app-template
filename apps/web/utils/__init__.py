@@ -13,4 +13,5 @@ from .paginate import paginate2dict
 from .json_type import JsonType
 from .request import RequestDict
 from .response import ResponseJson
-from .apis import gen_links, gen_pagination, sort_list, exclude_dict_key
+from .api_helper import gen_links, gen_pagination, sort_list
+from .api_helper import eliminate_key, remain_key

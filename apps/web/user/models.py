@@ -9,7 +9,7 @@ from flask_avatars import Identicon
 
 from apps.web.extensions import db, avatars, ma
 from apps.web.utils import JsonType, datetime_format
-from apps.web.utils import camelize_for_dict_key, exclude_dict_key
+from apps.web.utils import camelize_for_dict_key, eliminate_key
 from apps.web.mixin import ModelMixin
 
 
@@ -157,7 +157,7 @@ class User(Model, ModelMixin):
             if 'roles' in include:
                 data['roles'] = [role.name for role in self.roles]
         if exclude:
-            data = exclude_dict_key(data, exclude)
+            data = eliminate_key(data, exclude)
         if to_camelize:
             data = camelize_for_dict_key(data)
         return data
@@ -201,7 +201,7 @@ def user_to_dict(user: User, include: list = None, exclude: list = None, to_came
     if include:
         pass
     if exclude:
-        data = exclude_dict_key(data, exclude)
+        data = eliminate_key(data, exclude)
     if to_camelize:
         data = camelize_for_dict_key(data)
     return data

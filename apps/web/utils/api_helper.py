@@ -48,12 +48,22 @@ def sort_list(Model, sql, sort, order):
     return sql
 
 
-def exclude_dict_key(data: dict, exclude: list):
+def eliminate_key(data: dict, keys: list):
     """排除dict的key"""
     # 深拷贝data，实现pure function
     temp = copy.deepcopy(data)
-    if exclude:
-        del_keys = set(exclude) & set(temp.keys())
+    if keys:
+        del_keys = set(keys) & set(temp.keys())
         for item in del_keys:
             del temp[item]
+    return temp
+
+
+def remain_key(data: dict, keys: list):
+    """保留dict的key"""
+    temp = copy.deepcopy(data)
+    if keys:
+        del_keys = set(temp.keys()) - set(keys)
+        for key in del_keys:
+            del temp[key]
     return temp
