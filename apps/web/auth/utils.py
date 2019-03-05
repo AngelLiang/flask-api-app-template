@@ -66,6 +66,6 @@ def validate_token(token):
     else:
         user = User.query.get(data["user_id"])  # 使用令牌中的id来查询对应的用户对象
         if user is None:
-            raise APIException('没有该用户！', 404)
+            raise APIException('Not Found!', 404)
         g.token_data = data    # 将解析后的token dict存储到g
         return user
