@@ -15,29 +15,29 @@ def get_token():
     首先从 header 获取 token
     如果没有则从 values（query string or form）中获取 token
     最后再从 json body 获取 token
+
+    retType: tuple(token, token_type)
     """
     # 发送请求时需要把认证令牌附加在请求首部的Authorization字段中，并且在令牌前指定令牌类型（即Bearer）
     # Authorization: Bearer <TOKEN>
-    token_type = token = None
-    Authorization = request.headers.get("Authorization")
-    if Authorization:
+    try:
+        token_type, token = request.headers['Authorization'].split(None, 1)
+        return token, token_type
+    except (KeyError, ValueError):  # Authorization字段为空或token为空
+        pass
+
+    try:
+        return request.values['token'], request.values.get("token_type")
+    except KeyError:
+        pass
+
+    if request.is_json:
         try:
-            token_type, token = Authorization.split(None, 1)
-            return token, token_type
-        except ValueError:  # Authorization字段为空或token为空
-            token_type = token = None
+            return request.json['token'], request.json.get("token_type")
+        except KeyError:
+            pass
 
-    # 从args或values获取token
-    if not token:
-        token = request.values.get("token")
-        token_type = request.values.get("token_type")
-
-    # 从json body获取token
-    if not token and request.is_json:
-        token = request.json.get("token")
-        token_type = request.json.get("token_type")
-
-    return token, token_type
+    return None, None
 
 
 def generate_token(user, expiration=60 * 60 * 8):
