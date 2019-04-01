@@ -6,6 +6,7 @@
 
 import os
 import sys
+from dotenv import load_dotenv
 
 curr_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, curr_dir)
@@ -18,8 +19,9 @@ with open(activate_this) as file_:
     exec(file_.read(), dict(__file__=activate_this))
 
 # 加载.env环境变量
-from flask.cli import load_dotenv  # noqa
-load_dotenv()
+dotenv_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), '.env')
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path, override=True)
 
 from apps.web import create_app
 
